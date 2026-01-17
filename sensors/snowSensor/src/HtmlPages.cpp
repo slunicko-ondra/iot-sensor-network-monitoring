@@ -12,6 +12,18 @@ const char index_html[] = R"rawliteral(
     <p>Temperature: <span id="temp">—</span> ˚C</p>
     <p>Snow: <span id="snow">—</span> cm</p>
     <p>Pressure: <span id="press">—</span> hPa</p>
+
+    <form action='/' method='POST'>
+      <label>Known snow depth (cm):</label>
+      <input type='number' step='0.1' name='snow_depth' value='0'><br><br>
+      <input type='submit' value='Calibrate Sensor'>
+    </form>
+
+    <h1>Settings</h1>
+    <p><a href="/wifi">WiFi Settings</a></p>
+    <p><a href="/mqtt">MQTT Settings</a></p>
+    <p><a href="/update">OTA Update</a></p>
+
     <script>
       async function update() {
         try {
@@ -42,12 +54,29 @@ const char wifi_html[] = R"rawliteral(
   </head>
   <body>
     <h1>Wifi manager</h1>
-    <form action='/save' method='GET'>
+    <form action='/wifi' method='POST'>
     <label>SSID:</label><input type='text' name='ssid' value='%SSID%'><br><br>
     <label>Password:</label><input type='password' name='password'><br><br>
     <label>Static IP:</label><input type='text' name='ip' value='%IP%'><br><br>
     <label>Gateway IP:</label><input type='text' name='gateway' value='%GATEWAY%'><br><br>
 
+    <input type='submit' value='Save & Restart'>
+    </form>
+  </body>
+</html>
+)rawliteral";
+
+const char mqtt_html[] = R"rawliteral(
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Snow sensor ❄️</title>
+  </head>
+  <body>
+    <h1>MQTT Settings</h1>
+    <form action='/mqtt' method='POST'>
+    <label>Broker IP:</label><input type='text' name='broker' value='%BROKER%'><br><br>
     <input type='submit' value='Save & Restart'>
     </form>
   </body>
