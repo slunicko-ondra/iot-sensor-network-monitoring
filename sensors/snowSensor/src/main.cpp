@@ -16,37 +16,41 @@
 #define TRIG_PIN 32
 #define ECHO_PIN 33
 #define EEPROM_SIZE 128
-#define EEPROM_ADDRESS_SENSOR 0
-#define EEPROM_ADDRESS_WIFI 8
 
-SnowSensor snowSensor(TRIG_PIN, ECHO_PIN, EEPROM_ADDRESS_SENSOR);
+struct EepromData {
+    uint32_t memory_check;
+    double sensor_zero_depth;
+    char wifi_ssid[32];
+    char wifi_password[32];
+    char wifi_ip[16];
+    char wifi_gateway[16];
+    char mqtt_broker_ip[16];
+} eeprom_data;
+
+const uint32_t MEMORY_CHECK_VALUE = 0x600DCAFE;
+
+SnowSensor snowSensor(TRIG_PIN, ECHO_PIN, offsetof(EepromData, sensor_zero_depth));
 Adafruit_BMP280 bmp; // I2C
 
-// WiFi
-struct WiFiConfig {
-    char ssid[32];
-    char password[32];
-    char ip[16];
-    char gateway[16];
-} config;
-
 void saveConfig() {
-    EEPROM.put(EEPROM_ADDRESS_WIFI, config);
+    eeprom_data.memory_check = MEMORY_CHECK_VALUE;
+    EEPROM.put(0, eeprom_data);
     EEPROM.commit();
 }
 
 void loadConfig() {
-    EEPROM.get(EEPROM_ADDRESS_WIFI, config);
-    if (strlen(config.ssid) == 0) {
-        strcpy(config.ssid, "DefaultSSID");
-        strcpy(config.password, "DefaultPass");
-        strcpy(config.ip, "10.0.10.20");
-        strcpy(config.gateway, "10.0.10.1");
+    EEPROM.get(0, eeprom_data);
+    if (eeprom_data.memory_check != MEMORY_CHECK_VALUE) {
+        strcpy(eeprom_data.wifi_ssid, "DefaultSSID");
+        strcpy(eeprom_data.wifi_password, "DefaultPass");
+        strcpy(eeprom_data.wifi_ip, "10.0.10.20");
+        strcpy(eeprom_data.wifi_gateway, "10.0.10.1");
+        strcpy(eeprom_data.mqtt_broker_ip, "10.0.10.10");
+        eeprom_data.sensor_zero_depth = 0.0;
     }
 }
 
 // MQTT Broker
-auto mqtt_broker = "10.0.10.10";
 auto publish_topic = "weather";
 auto subscribe_topic = "calibrateSnow";
 auto calibration_status_topic = "calibrationStatus";
@@ -153,7 +157,7 @@ void setup() {
 
     // Connecting to a Wi-Fi network
     loadConfig();
-    WiFi.begin(config.ssid, config.password);
+    WiFi.begin(eeprom_data.wifi_ssid, eeprom_data.wifi_password);
     Serial.print("Connecting to WiFi");
     unsigned long startAttemptTime = millis();
     while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 20000) {
@@ -164,8 +168,8 @@ void setup() {
     if (WiFi.status() == WL_CONNECTED) {
         // Set static IP
         IPAddress local_IP, gateway;
-        local_IP.fromString(config.ip);
-        gateway.fromString(config.gateway);
+        local_IP.fromString(eeprom_data.wifi_ip);
+        gateway.fromString(eeprom_data.wifi_gateway);
         WiFi.config(local_IP, gateway, IPAddress(255,255,255,0));
         Serial.println("\nConnected! IP Address: " + WiFi.localIP().toString());
     } else {
@@ -175,7 +179,7 @@ void setup() {
     }
 
     //connecting to a mqtt broker
-    client.setServer(mqtt_broker, mqtt_port);
+    client.setServer(eeprom_data.mqtt_broker_ip, mqtt_port);
     client.setCallback(callback);
     int attempts = 0;
     while (!client.connected() && attempts < 5)
@@ -205,24 +209,55 @@ void setup() {
         req->send(200, "text/html", index_html);
     });
 
+    server.on("/", HTTP_POST, [](AsyncWebServerRequest *req) {
+        if (req->hasParam("snow_depth", true)) {
+            String snowDepthStr = req->getParam("snow_depth", true)->value();
+            double snowDepth = snowDepthStr.toDouble();
+            double result = snowSensor.calibrate(snowDepth);
+            req->send(200, "text/html", "Calibration done! Sensor zero depth: " + String(result) + " cm<br><a href='/'>Go Back</a>");
+        } else {
+            req->send(400, "text/html", "Missing snow_depth parameter!<br><a href='/'>Go Back</a>");
+        }
+    });
+
     server.on("/sensor", HTTP_GET, [](AsyncWebServerRequest *req){
         req->send(200, "application/json", getValuesJson());
     });
 
     server.on("/wifi", HTTP_GET, [](AsyncWebServerRequest *request) {
         String page = wifi_html;
-        page.replace("%SSID%", config.ssid);
-        page.replace("%IP%", config.ip);
-        page.replace("%GATEWAY%", config.gateway);
+        page.replace("%SSID%", eeprom_data.wifi_ssid);
+        page.replace("%IP%", eeprom_data.wifi_ip);
+        page.replace("%GATEWAY%", eeprom_data.wifi_gateway);
         request->send(200, "text/html", page);
     });
 
-    server.on("/save", HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (request->hasParam("ssid") && request->hasParam("password") && request->hasParam("ip") && request->hasParam("gateway")) {
-            strcpy(config.ssid, request->getParam("ssid")->value().c_str());
-            strcpy(config.password, request->getParam("password")->value().c_str());
-            strcpy(config.ip, request->getParam("ip")->value().c_str());
-            strcpy(config.gateway, request->getParam("gateway")->value().c_str());
+    server.on("/wifi", HTTP_POST, [](AsyncWebServerRequest *request) {
+        if (request->hasParam("ssid", true) && request->hasParam("password", true) &&
+            request->hasParam("ip", true) && request->hasParam("gateway", true)) {
+
+            strcpy(eeprom_data.wifi_ssid, request->getParam("ssid", true)->value().c_str());
+            strcpy(eeprom_data.wifi_password, request->getParam("password", true)->value().c_str());
+            strcpy(eeprom_data.wifi_ip, request->getParam("ip", true)->value().c_str());
+            strcpy(eeprom_data.wifi_gateway, request->getParam("gateway", true)->value().c_str());
+            saveConfig();
+            request->send(200, "text/html", "Settings Saved! Restarting...");
+            delay(2000);
+            ESP.restart();
+        } else {
+            request->send(400, "text/html", "Missing Parameters!");
+        }
+    });
+
+    server.on("/mqtt", HTTP_GET, [](AsyncWebServerRequest *request) {
+        String page = mqtt_html;
+        page.replace("%BROKER%", eeprom_data.mqtt_broker_ip);
+        request->send(200, "text/html", page);
+    });
+
+    server.on("/mqtt", HTTP_POST, [](AsyncWebServerRequest *request) {
+        if (request->hasParam("broker", true)) {
+            strcpy(eeprom_data.mqtt_broker_ip, request->getParam("broker", true)->value().c_str());
             saveConfig();
             request->send(200, "text/html", "Settings Saved! Restarting...");
             delay(2000);

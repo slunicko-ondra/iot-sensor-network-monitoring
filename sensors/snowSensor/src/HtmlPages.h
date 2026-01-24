@@ -2,6 +2,7 @@
 
 extern const char index_html[];
 extern const char wifi_html[];
+extern const char mqtt_html[];
 
 #define SNOWSENSOR_HTMLPAGES_H
 
