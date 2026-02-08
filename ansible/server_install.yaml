@@ -1,7 +1,19 @@
 ---
+- name: Setup OS
+  hosts: servers
+  tags: setup
+  become: yes
+  tasks:
+    - name: Setup paswordless sudo for ansible user
+      copy:
+        dest: /etc/sudoers.d/ansible
+        content: "{{ ansible_user }} ALL=(ALL) NOPASSWD:ALL"
+        mode: '0440'
+        validate: 'visudo -cf %s'
+
 - name: Install Docker
   tags: install
-  hosts: server
+  hosts: servers
   become: yes
   tasks:
     - name: Check if OS is Debian or Ubuntu
@@ -68,9 +80,14 @@
         daemon_reload: true
 
 - name: Run Docker compose
-  hosts: server
+  hosts: servers
   tags: run
   become: yes
+  vars_files:
+    - vault.yaml
+  environment:
+    NB_HOSTNAME: "{{ inventory_hostname }}"
+    NB_SETUP_KEY: "{{ vault_netbird_setup_key }}"
   tasks:
     - name: Copy docker folder to server
       copy:
