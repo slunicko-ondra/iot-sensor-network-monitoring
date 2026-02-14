@@ -1,7 +1,7 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUS",
+      "name": "ds_prometheus",
       "label": "prometheus",
       "description": "",
       "type": "datasource",
@@ -197,7 +197,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${ds_prometheus}"
       },
       "description": "System load  over all CPU cores together",
       "fieldConfig": {
@@ -275,7 +275,7 @@
           "step": 240,
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           }
         }
       ],
@@ -363,7 +363,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${ds_prometheus}"
       },
       "description": "Percentage of swap space currently used by the system",
       "fieldConfig": {
@@ -440,7 +440,7 @@
           "step": 240,
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           }
         }
       ],
@@ -538,7 +538,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${ds_prometheus}"
       },
       "description": "",
       "fieldConfig": {
@@ -607,7 +607,7 @@
           "refId": "A",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           }
         }
       ],
@@ -701,7 +701,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${ds_prometheus}"
       },
       "description": "",
       "fieldConfig": {
@@ -775,7 +775,7 @@
           "step": 240,
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           }
         }
       ],
@@ -874,7 +874,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${ds_prometheus}"
       },
       "description": "",
       "fieldConfig": {
@@ -948,7 +948,7 @@
           "step": 240,
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           }
         }
       ],
@@ -1048,7 +1048,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "CPU time spent busy vs idle, split by activity type",
           "fieldConfig": {
@@ -1217,7 +1217,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -1230,7 +1230,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -1243,7 +1243,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -1256,7 +1256,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -1269,7 +1269,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -1282,7 +1282,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -1517,7 +1517,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Per-interface network traffic (receive and transmit) in bits per second",
           "fieldConfig": {
@@ -1619,7 +1619,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -1632,7 +1632,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -1757,7 +1757,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "CPU time usage split by state, normalized across all CPU cores",
           "fieldConfig": {
@@ -2003,7 +2003,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -2016,7 +2016,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -2029,7 +2029,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -2042,7 +2042,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -2055,7 +2055,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -2068,7 +2068,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -2081,7 +2081,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -2094,7 +2094,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -2107,7 +2107,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -2627,7 +2627,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Incoming and outgoing network traffic per interface",
           "fieldConfig": {
@@ -2733,7 +2733,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -2746,7 +2746,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -2885,7 +2885,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Disk I/O operations per second for each device",
           "fieldConfig": {
@@ -2990,7 +2990,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -3002,7 +3002,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -3141,7 +3141,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Amount of available disk space per mounted filesystem, excluding rootfs. Based on block availability to non-root users",
           "fieldConfig": {
@@ -3236,7 +3236,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -3250,7 +3250,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -3264,7 +3264,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -3378,7 +3378,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Percentage of time the disk was actively processing I/O operations",
           "fieldConfig": {
@@ -3473,7 +3473,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -3690,7 +3690,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Displays committed memory usage versus the system's commit limit. Exceeding the limit is allowed under Linux overcommit policies but may increase OOM risks under high load",
           "fieldConfig": {
@@ -3803,7 +3803,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -3816,7 +3816,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -3967,7 +3967,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Kernel slab memory usage, separated into reclaimable and non-reclaimable categories. Reclaimable memory can be freed under memory pressure (e.g., caches), while unreclaimable memory is locked by the kernel for core functions",
           "fieldConfig": {
@@ -4059,7 +4059,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -4072,7 +4072,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -4226,7 +4226,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Proportion of memory pages in the kernel's active and inactive LRU lists relative to total RAM. Active pages have been recently used, while inactive pages are less recently accessed but still resident in memory",
           "fieldConfig": {
@@ -4350,7 +4350,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -4363,7 +4363,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -4515,7 +4515,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Tracks kernel memory used for CPU-local structures, per-thread stacks, and bounce buffers used for I/O on DMA-limited devices. These areas are typically small but critical for low-level operations",
           "fieldConfig": {
@@ -4608,7 +4608,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -4622,7 +4622,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -4636,7 +4636,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -4804,7 +4804,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Memory used by anonymous pages (not backed by files), including standard and huge page allocations. Includes heap, stack, and memory-mapped anonymous regions",
           "fieldConfig": {
@@ -4896,7 +4896,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -4909,7 +4909,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -5051,7 +5051,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "How much memory is directly mapped in the kernel using different page sizes (4K, 2M, 1G). Helps monitor large page utilization in the direct map region",
           "fieldConfig": {
@@ -5418,7 +5418,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -5432,7 +5432,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -5446,7 +5446,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -5611,7 +5611,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of memory pages being read from or written to disk (page-in and page-out operations). High page-out may indicate memory pressure or swapping activity",
           "fieldConfig": {
@@ -5715,7 +5715,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -5728,7 +5728,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -5865,7 +5865,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of memory page faults, split into total, major (disk-backed), and derived minor (non-disk) faults. High major fault rates may indicate memory pressure or insufficient RAM",
           "fieldConfig": {
@@ -5995,7 +5995,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -6008,7 +6008,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -6021,7 +6021,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -6164,7 +6164,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Tracks the system clock's estimated and maximum error, as well as its offset from the reference clock (e.g., via NTP). Useful for detecting synchronization drift",
           "fieldConfig": {
@@ -6258,7 +6258,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -6272,7 +6272,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -6286,7 +6286,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -6400,7 +6400,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Shows whether the system clock is synchronized to a reliable time source, and the current frequency correction ratio applied by the kernel to maintain synchronization",
           "fieldConfig": {
@@ -6494,7 +6494,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -6508,7 +6508,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -6523,7 +6523,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -6538,7 +6538,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -6666,7 +6666,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Tracks PPS signal timing jitter and shift compared to system clock",
           "fieldConfig": {
@@ -6758,7 +6758,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -6772,7 +6772,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -6944,7 +6944,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Processes currently in runnable or blocked states. Helps identify CPU contention or I/O wait bottlenecks.",
           "fieldConfig": {
@@ -7042,7 +7042,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -7055,7 +7055,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -7255,7 +7255,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of new processes being created on the system (forks/sec).",
           "fieldConfig": {
@@ -7349,7 +7349,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -7510,7 +7510,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Number of active PIDs on the system and the configured maximum allowed. Useful for detecting PID exhaustion risk. Requires --collector.processes in node_exporter",
           "fieldConfig": {
@@ -7633,7 +7633,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -7647,7 +7647,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -7818,7 +7818,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Per-second rate of context switches and hardware interrupts. High values may indicate intense CPU or I/O activity",
           "fieldConfig": {
@@ -7912,7 +7912,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -7925,7 +7925,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -8108,7 +8108,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Real-time CPU frequency scaling per core, including average minimum and maximum allowed scaling frequencies",
           "fieldConfig": {
@@ -8269,7 +8269,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -8283,7 +8283,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -8297,7 +8297,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -8411,7 +8411,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Breaks down hardware interrupts by type and device. Useful for diagnosing IRQ load on network, disk, or CPU interfaces. Requires --collector.interrupts to be enabled in node_exporter",
           "fieldConfig": {
@@ -8506,7 +8506,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -8677,7 +8677,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Monitors hardware sensor temperatures and critical thresholds as exposed by Linux hwmon. Includes CPU, GPU, and motherboard sensors where available",
           "fieldConfig": {
@@ -8790,7 +8790,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -8803,7 +8803,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -8817,7 +8817,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -8830,7 +8830,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -8843,7 +8843,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -8975,7 +8975,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Shows the online status of power supplies (e.g., AC, battery). A value of 1-Yes indicates the power supply is active/online",
           "fieldConfig": {
@@ -9071,7 +9071,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -9213,7 +9213,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Current number of systemd units in each operational state, such as active, failed, inactive, or transitioning",
           "fieldConfig": {
@@ -9381,7 +9381,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -9395,7 +9395,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -9409,7 +9409,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -9423,7 +9423,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -9437,7 +9437,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -9550,7 +9550,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of accepted connections per second for each systemd socket",
           "fieldConfig": {
@@ -9643,7 +9643,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -9770,7 +9770,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Number of I/O operations completed per second for the device (after merges), including both reads and writes",
           "fieldConfig": {
@@ -9888,7 +9888,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -9900,7 +9900,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -10054,7 +10054,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Average time for requests issued to the device to be served. This includes the time spent by the requests in queue and the time spent servicing them.",
           "fieldConfig": {
@@ -10173,7 +10173,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -10186,7 +10186,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -10314,7 +10314,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Number of read and write requests merged per second that were queued to the device",
           "fieldConfig": {
@@ -10432,7 +10432,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -10444,7 +10444,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -10598,7 +10598,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Per-second rate of discard (TRIM) and flush (write cache) operations. Useful for monitoring low-level disk activity on SSDs and advanced storage",
           "fieldConfig": {
@@ -10705,7 +10705,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -10718,7 +10718,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -10731,7 +10731,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -10858,7 +10858,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Number of in-progress I/O requests at the time of sampling (active requests in the disk queue)",
           "fieldConfig": {
@@ -10966,7 +10966,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -11135,7 +11135,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Number of free file nodes (inodes) available per mounted filesystem. A low count may prevent file creation even if disk space is available",
           "fieldConfig": {
@@ -11227,7 +11227,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -11354,7 +11354,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Number of file nodes (inodes) available per mounted filesystem. Reflects maximum file capacity regardless of disk size",
           "fieldConfig": {
@@ -11446,7 +11446,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -11600,7 +11600,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of packet-level errors for each network interface. Receive errors may indicate physical or driver issues; transmit errors may reflect collisions or hardware faults",
           "fieldConfig": {
@@ -11705,7 +11705,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -11718,7 +11718,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -11856,7 +11856,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of compressed network packets received and transmitted per interface. These are common in low-bandwidth or special interfaces like PPP or SLIP",
           "fieldConfig": {
@@ -11961,7 +11961,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -11974,7 +11974,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -12099,7 +12099,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of received packets that could not be processed due to missing protocol or handler in the kernel. May indicate unsupported traffic or misconfiguration",
           "fieldConfig": {
@@ -12204,7 +12204,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -12329,7 +12329,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Tracks FIFO buffer overrun errors on network interfaces. These occur when incoming or outgoing packets are dropped due to queue or buffer overflows, often indicating congestion or hardware limits",
           "fieldConfig": {
@@ -12434,7 +12434,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -12447,7 +12447,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -12572,7 +12572,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of carrier errors during transmission. These typically indicate physical layer issues like faulty cabling or duplex mismatches",
           "fieldConfig": {
@@ -12664,7 +12664,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -12776,7 +12776,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Current and maximum connection tracking entries used by Netfilter (nf_conntrack). High usage approaching the limit may cause packet drops or connection issues",
           "fieldConfig": {
@@ -12898,7 +12898,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -12911,7 +12911,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -13036,7 +13036,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Maximum speed of each network interface as reported by the operating system. This is a static hardware capability, not current throughput",
           "fieldConfig": {
@@ -13104,7 +13104,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -13205,7 +13205,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Tracks TCP socket usage and memory per node",
           "fieldConfig": {
@@ -13299,7 +13299,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -13313,7 +13313,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -13327,7 +13327,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -13341,7 +13341,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -13469,7 +13469,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Total number of sockets currently in use across all protocols (TCP, UDP, UNIX, etc.), as reported by /proc/net/sockstat",
           "fieldConfig": {
@@ -13563,7 +13563,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -13691,7 +13691,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Kernel memory used by TCP, UDP, and IP fragmentation buffers",
           "fieldConfig": {
@@ -13785,7 +13785,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -13799,7 +13799,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -13811,7 +13811,7 @@
               "refId": "C",
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -13939,7 +13939,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "TCP/UDP socket memory usage in kernel (in pages)",
           "fieldConfig": {
@@ -14033,7 +14033,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -14047,7 +14047,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -14187,7 +14187,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "How often the kernel was unable to process all packets in the softnet queue before time ran out. Frequent squeezes may indicate CPU contention or driver inefficiency",
           "fieldConfig": {
@@ -14284,7 +14284,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -14445,7 +14445,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of octets sent and received at the IP layer, as reported by /proc/net/netstat",
           "fieldConfig": {
@@ -14551,7 +14551,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -14564,7 +14564,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -14714,7 +14714,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of UDP datagrams sent and received per second, based on /proc/net/netstat",
           "fieldConfig": {
@@ -14819,7 +14819,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -14833,7 +14833,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -14976,7 +14976,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Tracks various TCP error and congestion-related events, including retransmissions, timeouts, dropped connections, and buffer issues",
           "fieldConfig": {
@@ -15069,7 +15069,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -15083,7 +15083,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -15097,7 +15097,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -15109,7 +15109,7 @@
               "refId": "D",
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -15121,7 +15121,7 @@
               "refId": "E",
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -15133,7 +15133,7 @@
               "refId": "F",
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -15145,7 +15145,7 @@
               "refId": "G",
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -15157,7 +15157,7 @@
               "refId": "H",
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -15169,7 +15169,7 @@
               "refId": "I",
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -15339,7 +15339,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of incoming ICMP messages that contained protocol-specific errors, such as bad checksums or invalid lengths",
           "fieldConfig": {
@@ -15444,7 +15444,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -15600,7 +15600,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Number of currently established TCP connections and the system's max supported limit. On Linux, MaxConn may return -1 to indicate a dynamic/unlimited configuration",
           "fieldConfig": {
@@ -15723,7 +15723,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -15737,7 +15737,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -15863,7 +15863,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Rate of TCP connection initiations per second. 'Active' opens are initiated by this host. 'Passive' opens are accepted from incoming connections",
           "fieldConfig": {
@@ -15956,7 +15956,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -15970,7 +15970,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -16154,7 +16154,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Duration of each individual collector executed during a Node Exporter scrape. Useful for identifying slow or failing collectors",
           "fieldConfig": {
@@ -16252,7 +16252,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -16366,7 +16366,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Tracks the memory usage of the process exposing this metric (e.g., node_exporter), including current virtual memory and maximum virtual memory limit",
           "fieldConfig": {
@@ -16514,7 +16514,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -16527,7 +16527,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -16708,7 +16708,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${ds_prometheus}"
           },
           "description": "Shows whether each Node Exporter collector scraped successfully (1 = success, 0 = failure), and whether the textfile collector returned an error.",
           "fieldConfig": {
@@ -16783,7 +16783,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             },
             {
@@ -16797,7 +16797,7 @@
               "step": 240,
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "${ds_prometheus}"
               }
             }
           ],
@@ -16851,7 +16851,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${ds_prometheus}"
         },
         "definition": "label_values(node_uname_info{job=\"$job\"}, nodename)",
         "includeAll": false,

@@ -60,6 +60,7 @@ services:
     restart: unless-stopped
     volumes:
       - '/:/host:ro,rslave'
+      - '/run/udev:/run/udev:ro'
 
   netbird-client:
     container_name: netbird-client
