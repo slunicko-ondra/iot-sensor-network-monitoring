@@ -32,7 +32,6 @@ services:
     image: eclipse-mosquitto:latest
     container_name: mosquitto
     restart: unless-stopped
-#    network_mode: "host"
     ports:
       - '1883:1883'
     volumes:
@@ -44,11 +43,11 @@ services:
     image: kpetrem/mqtt-exporter:latest
     container_name: mqtt-exporter
     restart: unless-stopped
-    network_mode: "host"
-#    ports:
-#      - '9000:9000'
+    ports:
+      - '9000:9000'
     environment:
-      - MQTT_ADDRESS=127.0.0.1
+      - MQTT_ADDRESS=mosquitto
+      - MQTT_IGNORED_TOPICS=zigbee2mqtt/bridge/*,zigbee2mqtt/config/*,zigbee2mqtt/clusters/*
 
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
