@@ -4,9 +4,8 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
-    network_mode: "host"
-#    ports:
-#      - '9090:9090'
+    ports:
+      - '9090:9090'
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
@@ -18,9 +17,8 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
-    network_mode: "host"
-#    ports:
-#      - '3000:3000'
+    ports:
+      - '3000:3000'
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=ChangeMe123  # TODO
     volumes:
@@ -71,7 +69,7 @@ services:
     devices:
       # Required when using userspace mode or when kernel module is not available
       - /dev/net/tun
-    network_mode: host
+    network_mode: "host"
     environment:
       - NB_SETUP_KEY=${NB_SETUP_KEY}
     volumes:
