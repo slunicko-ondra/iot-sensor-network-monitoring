@@ -32,9 +32,9 @@ services:
     image: eclipse-mosquitto:latest
     container_name: mosquitto
     restart: unless-stopped
-    network_mode: "host"
-#    ports:
-#      - '1883:1883'
+#    network_mode: "host"
+    ports:
+      - '1883:1883'
     volumes:
       - ./mosquitto/config:/mosquitto/config:ro
       - mosquitto-data:/mosquitto/data
@@ -77,6 +77,23 @@ services:
     volumes:
       - netbird-client:/var/lib/netbird
     image: netbirdio/netbird:latest
+
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: ghcr.io/koenkk/zigbee2mqtt
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
+    volumes:
+      - ./zigbee2mqtt:/app/data
+      - /run/udev:/run/udev:ro
+    ports:
+      # Frontend port
+      - "8080:8080"
+    environment:
+      - TZ=${TZ}
+    devices:
+      - /dev/serial/by-id/${ZIGBEE_USB_DEVICE}:/dev/ttyACM0
 
 volumes:
   prometheus-data:
