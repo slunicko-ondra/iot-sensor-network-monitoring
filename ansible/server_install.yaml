@@ -10,6 +10,19 @@
         content: "{{ ansible_user }} ALL=(ALL) NOPASSWD:ALL"
         mode: '0440'
         validate: 'visudo -cf %s'
+    - name: Set hostname
+      hostname:
+        name: "{{ inventory_hostname }}"
+    - name: Install avahi-daemon for mDNS support
+      apt:
+        name: avahi-daemon
+        state: present
+        update_cache: yes
+    - name: Enable and start avahi-daemon
+      systemd:
+        name: avahi-daemon
+        state: started
+        enabled: yes
 
 - name: Install Docker
   tags: install
