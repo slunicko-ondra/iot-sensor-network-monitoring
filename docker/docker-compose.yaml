@@ -93,6 +93,19 @@ services:
     devices:
       - /dev/serial/by-id/${ZIGBEE_USB_DEVICE}:/dev/ttyACM0
 
+  homeassistant:
+    container_name: homeassistant-docker
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ./homeassistant/config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    environment:
+      TZ: ${TZ}
+
 volumes:
   prometheus-data:
   grafana-data:
