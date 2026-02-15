@@ -184,6 +184,7 @@
         content: |
           NB_HOSTNAME={{ inventory_hostname }}
           NB_SETUP_KEY={{ vault_netbird_setup_key }}
+          GRAFANA_ADMIN_PASSWORD={{ vault_grafana_admin_password }}
           TZ={{ ansible_date_time.tz }}
           ZIGBEE_USB_DEVICE={{ adapter_id }}
         owner: "{{ ansible_user }}"
