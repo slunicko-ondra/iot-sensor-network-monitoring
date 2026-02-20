@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="cz">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoring rozcestník</title>
+</head>
+<body>
+    <h1>Aplikace</h1>
+    <ul>
+        <li><a href="http://grafana.{{ ansible_hostname }}.{{ netbird_domain }}">Grafana</a></li>
+        <li><a href="http://prometheus.{{ ansible_hostname }}.{{ netbird_domain }}">Prometheus</a></li>
+        <li><a href="http://zigbee2mqtt.{{ ansible_hostname }}.{{ netbird_domain }}">Zigbee2MQTT</a></li>
+        <li><a href="http://homeassistant.{{ ansible_hostname }}.{{ netbird_domain }}">Home Assistant</a></li>
+    </ul>
+</body>
+</html>
