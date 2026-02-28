@@ -204,6 +204,8 @@
           GRAFANA_ADMIN_PASSWORD={{ vault_grafana_admin_password }}
           TZ={{ ansible_date_time.tz }}
           ZIGBEE_USB_DEVICE={{ adapter_id }}
+          ESPHOME_USERNAME=admin
+          ESPHOME_PASSWORD={{ vault_esphome_password }}
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'

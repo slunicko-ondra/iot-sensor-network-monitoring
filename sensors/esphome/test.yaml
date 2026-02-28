@@ -1,0 +1,49 @@
+esphome:
+  name: testsensor
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+ota:
+  - platform: web_server
+
+web_server:
+  port: 80
+
+wifi:
+  ssid: "TODO"
+  password: "TODO"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Test Sensor Fallback Hotspot"
+    password: "kProm2iSDJDm"
+
+captive_portal:
+
+mqtt:
+  broker: 10.0.10.12
+  log_topic:
+    topic: "testsensor/debug"
+    level: WARN
+
+sensor:
+  - platform: dht
+    pin: 0
+    temperature:
+      id: "temp_sensor"
+    humidity:
+      id: "humidity_sensor"
+    update_interval: 10s
+
+interval:
+  - interval: 10s
+    then:
+      - mqtt.publish_json:
+          topic: dht_sensor/data
+          payload: |-
+            root["temperature"] = id(temp_sensor).state;
+            root["humidity"] = id(humidity_sensor).state;
