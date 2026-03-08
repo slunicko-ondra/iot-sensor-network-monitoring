@@ -3,7 +3,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
-    restart: unless-stopped
+    restart: always
     ports:
       - '9090:9090'
     volumes:
@@ -16,7 +16,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
-    restart: unless-stopped
+    restart: always
     ports:
       - '3000:3000'
     environment:
@@ -29,7 +29,7 @@ services:
   mosquitto:
     image: eclipse-mosquitto:latest
     container_name: mosquitto
-    restart: unless-stopped
+    restart: always
     ports:
       - '1883:1883'
     volumes:
@@ -40,7 +40,7 @@ services:
   mqtt-exporter:
     image: kpetrem/mqtt-exporter:latest
     container_name: mqtt-exporter
-    restart: unless-stopped
+    restart: always
     ports:
       - '9000:9000'
     environment:
@@ -54,7 +54,7 @@ services:
       - '--path.rootfs=/host'
     network_mode: "host"
     pid: "host"
-    restart: unless-stopped
+    restart: always
     volumes:
       - '/:/host:ro,rslave'
       - '/run/udev:/run/udev:ro'
@@ -62,7 +62,7 @@ services:
   netbird-client:
     container_name: netbird-client
     hostname: ${NB_HOSTNAME}
-    restart: unless-stopped
+    restart: always
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
@@ -82,7 +82,7 @@ services:
     image: ghcr.io/koenkk/zigbee2mqtt
     depends_on:
       - mosquitto
-    restart: unless-stopped
+    restart: always
     volumes:
       - ./zigbee2mqtt:/app/data
       - /run/udev:/run/udev:ro
@@ -101,7 +101,7 @@ services:
       - ./homeassistant/config:/config
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
-    restart: unless-stopped
+    restart: always
     privileged: true
     network_mode: host
     environment:
@@ -110,7 +110,7 @@ services:
   nginx-reverse-proxy:
     container_name: nginx-reverse-proxy
     image: nginx:latest
-    restart: unless-stopped
+    restart: always
     ports:
       - '80:80'
     extra_hosts:
@@ -131,6 +131,19 @@ services:
     environment:
       - USERNAME=${ESPHOME_USERNAME}
       - PASSWORD=${ESPHOME_PASSWORD}
+
+  dnsmasq:
+    image: dockurr/dnsmasq
+    container_name: dnsmasq
+    ports:
+      - "5053:53/udp"
+      - "5053:53/tcp"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf:ro
+    restart: always
+
 
 volumes:
   prometheus-data:

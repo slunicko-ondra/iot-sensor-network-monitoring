@@ -4,25 +4,52 @@
   tags: setup
   become: yes
   tasks:
-    - name: Setup paswordless sudo for ansible user
+    - name: Set up paswordless sudo for ansible user
       copy:
         dest: /etc/sudoers.d/ansible
         content: "{{ ansible_user }} ALL=(ALL) NOPASSWD:ALL"
         mode: '0440'
         validate: 'visudo -cf %s'
+
     - name: Set hostname
       hostname:
         name: "{{ inventory_hostname }}"
+
     - name: Install avahi-daemon for mDNS support
       apt:
         name: avahi-daemon
         state: present
         update_cache: yes
+
     - name: Enable and start avahi-daemon
       systemd:
         name: avahi-daemon
         state: started
         enabled: yes
+
+    - name: Set up systemd-resolve to release port 53 for dnsmasq
+      lineinfile:
+        path: /etc/systemd/resolved.conf
+        regexp: '^#?DNSStubListener='
+        line: 'DNSStubListener=no'
+        state: present
+
+    - name: Restart systemd-resolved to apply changes
+      systemd:
+        name: systemd-resolved
+        state: restarted
+
+    - name: Delete resolv.conf symlink
+      file:
+        path: /etc/resolv.conf
+        state: absent
+
+    - name: Create new resolv.conf symlink
+      file:
+        src: /run/systemd/resolve/resolv.conf
+        dest: /etc/resolv.conf
+        state: link
+        force: true
 
 - name: Install Docker
   tags: install
@@ -65,10 +92,12 @@
     - name: Determine system architecture
       command: "dpkg --print-architecture"
       register: architecture
+      changed_when: false
 
     - name: Include OS release information
       shell: "cat /etc/os-release"
       register: os_release_raw
+      changed_when: false
 
     - name: Generate Docker repository entry
       shell: |
@@ -100,13 +129,9 @@
     - vault.yaml
   tasks:
     - name: Copy docker folder to server
-      copy:
+      synchronize:
         src: ../docker/
         dest: /home/{{ ansible_user }}/docker/
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        directory_mode: '0755'
-        mode: '0644'
 
     # Zigbee adapter configuration tasks
     - name: Find Zigbee adapter
@@ -210,12 +235,87 @@
         group: "{{ ansible_user }}"
         mode: '0644'
 
-    - name: Run Docker Compose
+    - name: Run Docker Compose (except dnsmasq)
       community.docker.docker_compose_v2:
         project_src: /home/{{ ansible_user }}/docker/
         state: present
+        services:
+          - prometheus
+          - grafana
+          - mosquitto
+          - mqtt-exporter
+          - node-exporter
+          - netbird-client
+          - zigbee2mqtt
+          - homeassistant
+          - nginx-reverse-proxy
+          - esphome
       register: output
 
     - name: Show results
       debug:
         var: output
+
+    # DNS setup
+
+    - name: Wait for Netbird IP
+      shell: "ip -4 addr show wt0 | awk '/inet / {print $2}' | cut -d/ -f1"
+      register: netbird_ip_result
+      retries: 10
+      delay: 6
+      until: netbird_ip_result.stdout != ""
+      changed_when: false
+
+    - name: Set fact for Netbird IP
+      set_fact:
+        netbird_ip: "{{ netbird_ip_result.stdout }}"
+
+    - name: Add dnsmasq configuration for Netbird IP
+      template:
+        src: ../docker/dnsmasq/dnsmasq.conf.j2
+        dest: /home/{{ ansible_user }}/docker/dnsmasq/dnsmasq.conf
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+
+    - name: Run dnsmasq container
+      community.docker.docker_compose_v2:
+        project_src: /home/{{ ansible_user }}/docker/
+        state: present
+        services:
+          - dnsmasq
+      register: dnsmasq_output
+
+    - name: Show dnsmasq results
+      debug:
+        var: dnsmasq_output
+
+- name: Set up Netbird DNS
+  hosts: servers
+  tags: netbird
+  become: no
+  vars_files:
+    - vault.yaml
+  tasks:
+    - name: Wait for Netbird IP
+      shell: "ip -4 addr show wt0 | awk '/inet / {print $2}' | cut -d/ -f1"
+      register: netbird_ip_result
+      retries: 10
+      delay: 6
+      until: netbird_ip_result.stdout != ""
+      changed_when: false
+
+    - name: Set fact for Netbird IP
+      set_fact:
+        netbird_ip: "{{ netbird_ip_result.stdout }}"
+
+    - name: Add nameserver
+      netbird_add_nameserver_group:
+        api_key: "{{ vault_netbird_token }}"
+        name: "{{ inventory_hostname }} dnsmasq"
+        description: "Nameserver group added by Ansible playbook via Netbird API for dnsmasq running on {{ inventory_hostname }}"
+        nameservers:
+          - ip: "{{ netbird_ip }}"
+            port: 5053
+        groups:
+          - "All"
