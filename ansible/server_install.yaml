@@ -238,6 +238,7 @@
           ZIGBEE_USB_DEVICE={{ adapter_id }}
           ESPHOME_USERNAME=admin
           ESPHOME_PASSWORD={{ vault_esphome_password }}
+          LOCAL_IP={{ ansible_default_ipv4.address }}
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
@@ -279,23 +280,47 @@
 
     - name: Add dnsmasq configuration for Netbird IP
       template:
-        src: ../docker/dnsmasq/dnsmasq.conf.j2
-        dest: /home/{{ ansible_user }}/docker/dnsmasq/dnsmasq.conf
+        src: ../docker/dnsmasq-netbird/dnsmasq.conf.j2
+        dest: /home/{{ ansible_user }}/docker/dnsmasq-netbird/dnsmasq.conf
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
 
-    - name: Run dnsmasq container
+    - name: Run dnsmasq-netbird container
       community.docker.docker_compose_v2:
         project_src: /home/{{ ansible_user }}/docker/
         state: present
         services:
-          - dnsmasq
-      register: dnsmasq_output
+          - dnsmasq-netbird
+      register: dnsmasq_netbird_output
 
-    - name: Show dnsmasq results
+    - name: Show dnsmasq-netbird results
       debug:
-        var: dnsmasq_output
+        var: dnsmasq_netbird_output
+
+    - name: Set fact for local IP
+      set_fact:
+        local_ip: "{{ ansible_default_ipv4.address }}"
+
+    - name: Add dnsmasq configuration for local network
+      template:
+        src: ../docker/dnsmasq-local/dnsmasq.conf.j2
+        dest: /home/{{ ansible_user }}/docker/dnsmasq-local/dnsmasq.conf
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+
+    - name: Run dnsmasq-local container
+      community.docker.docker_compose_v2:
+        project_src: /home/{{ ansible_user }}/docker/
+        state: present
+        services:
+          - dnsmasq-local
+      register: dnsmasq_local_output
+
+    - name: Show dnsmasq-local results
+      debug:
+        var: dnsmasq_local_output
 
 - name: Set up Netbird DNS
   hosts: servers

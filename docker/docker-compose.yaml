@@ -132,16 +132,28 @@ services:
       - USERNAME=${ESPHOME_USERNAME}
       - PASSWORD=${ESPHOME_PASSWORD}
 
-  dnsmasq:
+  dnsmasq-netbird:
     image: dockurr/dnsmasq
-    container_name: dnsmasq
+    container_name: dnsmasq-netbird
     ports:
       - "5053:53/udp"
       - "5053:53/tcp"
     cap_add:
       - NET_ADMIN
     volumes:
-      - ./dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf:ro
+      - ./dnsmasq-netbird/dnsmasq.conf:/etc/dnsmasq.conf:ro
+    restart: always
+
+  dnsmasq-local:
+    image: dockurr/dnsmasq
+    container_name: dnsmasq-local
+    ports:
+      - "${LOCAL_IP}:53:53/udp"
+      - "${LOCAL_IP}:53:53/tcp"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./dnsmasq-local/dnsmasq.conf:/etc/dnsmasq.conf:ro
     restart: always
 
 
