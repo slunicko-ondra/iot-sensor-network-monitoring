@@ -1,3 +1,8 @@
 inventory*
 vault.yaml
 ansible.cfg
+
+group_vars/*.yaml
+host_vars/*.yaml
+!group_vars/*.example.yaml
+!host_vars/*.example.yaml

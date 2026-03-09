@@ -2,16 +2,16 @@
 <html lang="cz">
 <head>
     <meta charset="UTF-8">
-    <title>Monitoring rozcestník</title>
+    <title>IoT Apps</title>
 </head>
 <body>
-    <h1>Aplikace</h1>
+    <h1>Apps</h1>
     <ul>
-        <li><a href="http://grafana.{{ ansible_hostname }}.{{ netbird_domain }}">Grafana</a></li>
-        <li><a href="http://prometheus.{{ ansible_hostname }}.{{ netbird_domain }}">Prometheus</a></li>
-        <li><a href="http://zigbee2mqtt.{{ ansible_hostname }}.{{ netbird_domain }}">Zigbee2MQTT</a></li>
-        <li><a href="http://homeassistant.{{ ansible_hostname }}.{{ netbird_domain }}">Home Assistant</a></li>
-        <li><a href="http://esphome.{{ ansible_hostname }}.{{ netbird_domain }}">ESPHome</a></li>
+        <li><a href="http://grafana.{{ ansible_hostname }}.{{ domain_name }}">Grafana</a></li>
+        <li><a href="http://prometheus.{{ ansible_hostname }}.{{ domain_name }}">Prometheus</a></li>
+        <li><a href="http://zigbee2mqtt.{{ ansible_hostname }}.{{ domain_name }}">Zigbee2MQTT</a></li>
+        <li><a href="http://homeassistant.{{ ansible_hostname }}.{{ domain_name }}">Home Assistant</a></li>
+        <li><a href="http://esphome.{{ ansible_hostname }}.{{ domain_name }}">ESPHome</a></li>
     </ul>
 </body>
 </html>

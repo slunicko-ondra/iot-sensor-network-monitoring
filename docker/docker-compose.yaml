@@ -1,7 +1,7 @@
 services:
 
   prometheus:
-    image: prom/prometheus:latest
+    image: "prom/prometheus:${PROMETHEUS_VERSION:-latest}"
     container_name: prometheus
     restart: always
     ports:
@@ -14,7 +14,7 @@ services:
       - '--storage.tsdb.path=/prometheus'
 
   grafana:
-    image: grafana/grafana:latest
+    image: "grafana/grafana:${GRAFANA_VERSION:-latest}"
     container_name: grafana
     restart: always
     ports:
@@ -27,7 +27,7 @@ services:
       - grafana-data:/var/lib/grafana
 
   mosquitto:
-    image: eclipse-mosquitto:latest
+    image: "eclipse-mosquitto:${MOSQUITTO_VERSION:-latest}"
     container_name: mosquitto
     restart: always
     ports:
@@ -38,7 +38,7 @@ services:
       - mosquitto-logs:/mosquitto/logs
 
   mqtt-exporter:
-    image: kpetrem/mqtt-exporter:latest
+    image: "kpetrem/mqtt-exporter:${MQTT_EXPORTER_VERSION:-latest}"
     container_name: mqtt-exporter
     restart: always
     ports:
@@ -48,7 +48,7 @@ services:
       - MQTT_IGNORED_TOPICS=zigbee2mqtt/bridge/*,zigbee2mqtt/config/*,zigbee2mqtt/clusters/*
 
   node-exporter:
-    image: quay.io/prometheus/node-exporter:latest
+    image: "quay.io/prometheus/node-exporter:${NODE_EXPORTER_VERSION:-latest}"
     container_name: node-exporter
     command:
       - '--path.rootfs=/host'
@@ -60,6 +60,7 @@ services:
       - '/run/udev:/run/udev:ro'
 
   netbird-client:
+    image: "netbirdio/netbird:${NETBIRD_CLIENT_VERSION:-latest}"
     container_name: netbird-client
     hostname: ${NB_HOSTNAME}
     restart: always
@@ -75,11 +76,10 @@ services:
       - NB_SETUP_KEY=${NB_SETUP_KEY}
     volumes:
       - netbird-client:/var/lib/netbird
-    image: netbirdio/netbird:latest
 
   zigbee2mqtt:
+    image: "ghcr.io/koenkk/zigbee2mqtt:${ZIGBEE2MQTT_VERSION:-latest}"
     container_name: zigbee2mqtt
-    image: ghcr.io/koenkk/zigbee2mqtt
     depends_on:
       - mosquitto
     restart: always
@@ -95,8 +95,8 @@ services:
       - /dev/serial/by-id/${ZIGBEE_USB_DEVICE}:/dev/ttyACM0
 
   homeassistant:
+    image: "ghcr.io/home-assistant/home-assistant:${HOME_ASSISTANT_VERSION:-stable}"
     container_name: homeassistant-docker
-    image: "ghcr.io/home-assistant/home-assistant:stable"
     volumes:
       - ./homeassistant/config:/config
       - /etc/localtime:/etc/localtime:ro
@@ -108,8 +108,8 @@ services:
       TZ: ${TZ}
 
   nginx-reverse-proxy:
+    image: "nginx:${NGINX_VERSION:-latest}"
     container_name: nginx-reverse-proxy
-    image: nginx:latest
     restart: always
     ports:
       - '80:80'
@@ -120,8 +120,8 @@ services:
       - ./nginx/html:/usr/share/nginx/html:ro
 
   esphome:
+    image: "ghcr.io/esphome/esphome:${ESPHOME_VERSION:-latest}"
     container_name: esphome
-    image: ghcr.io/esphome/esphome
     volumes:
       - ./esphome/config:/config
       - /etc/localtime:/etc/localtime:ro
@@ -133,7 +133,7 @@ services:
       - PASSWORD=${ESPHOME_PASSWORD}
 
   dnsmasq-netbird:
-    image: dockurr/dnsmasq
+    image: "dockurr/dnsmasq:${DNSMASQ_VERSION:-latest}"
     container_name: dnsmasq-netbird
     ports:
       - "5053:53/udp"
@@ -145,7 +145,7 @@ services:
     restart: always
 
   dnsmasq-local:
-    image: dockurr/dnsmasq
+    image: "dockurr/dnsmasq:${DNSMASQ_VERSION:-latest}"
     container_name: dnsmasq-local
     ports:
       - "${LOCAL_IP}:53:53/udp"

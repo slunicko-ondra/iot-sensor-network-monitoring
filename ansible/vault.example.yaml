@@ -1,0 +1,12 @@
+# This is a file for sensitive data used by Ansible.
+# Create this file using the command: `ansible-vault create vault.yaml` with the following content:
+
+# Access token used by Ansible to authenticate with Netbird API and manage the Netbird configuration.
+# Create a token in Netbird dashboard (https://app.netbird.io/) > Team > Users > You > Access Tokens.
+vault_netbird_token:
+
+# Default password for Grafana admin user. You can change it after the first login in Grafana UI.
+vault_grafana_admin_password:
+
+# Password for ESPHome.
+vault_esphome_password:

@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name {{ ansible_hostname }}.{{ netbird_domain }};
+    server_name {{ ansible_hostname }}.{{ domain_name }};
 
     location / {
         root /usr/share/nginx/html;
@@ -13,7 +13,7 @@ server {
 
 server {
     listen 80;
-    server_name grafana.{{ ansible_hostname }}.{{ netbird_domain }};
+    server_name grafana.{{ ansible_hostname }}.{{ domain_name }};
 
     location / {
         proxy_pass http://grafana:3000;
@@ -32,7 +32,7 @@ server {
 
 server {
     listen 80;
-    server_name prometheus.{{ ansible_hostname }}.{{ netbird_domain }};
+    server_name prometheus.{{ ansible_hostname }}.{{ domain_name }};
 
     location / {
         proxy_pass http://prometheus:9090;
@@ -46,7 +46,7 @@ server {
 
 server {
     listen 80;
-    server_name zigbee2mqtt.{{ ansible_hostname }}.{{ netbird_domain }};
+    server_name zigbee2mqtt.{{ ansible_hostname }}.{{ domain_name }};
 
     location / {
         proxy_pass http://zigbee2mqtt:8080;
@@ -65,7 +65,7 @@ server {
 
 server {
     listen 80;
-    server_name homeassistant.{{ ansible_hostname }}.{{ netbird_domain }};
+    server_name homeassistant.{{ ansible_hostname }}.{{ domain_name }};
 
     location / {
         proxy_pass http://host.docker.internal:8123;
@@ -84,7 +84,7 @@ server {
 
 server {
     listen 80;
-    server_name esphome.{{ ansible_hostname }}.{{ netbird_domain }};
+    server_name esphome.{{ ansible_hostname }}.{{ domain_name }};
 
     location / {
         proxy_pass http://host.docker.internal:6052;

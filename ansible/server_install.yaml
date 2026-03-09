@@ -187,6 +187,11 @@
       debug:
         msg: "Zigbee adapter detected: {{ adapter_id }} (type: {{ adapter_type | default('auto-detected') }})"
 
+    - name: Check if zigbee2mqtt configuration file exists
+      stat:
+        path: /home/{{ ansible_user }}/docker/zigbee2mqtt/configuration.yaml
+      register: zigbee2mqtt_config_stat
+
     - name: Fill zigbee2mqtt configuration template
       template:
         src: ../docker/zigbee2mqtt/configuration.yaml.j2
@@ -194,7 +199,7 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
-      when: zigbee2mqtt_reset | default(false) | bool
+      when: zigbee2mqtt_config_stat.stat.exists == false or zigbee2mqtt_reset | default(false) | bool
 
     - name: Stop zigbee2mqtt container if running to reset state
       community.docker.docker_compose_v2:
@@ -228,17 +233,9 @@
         mode: '0644'
 
     - name: Create .env file for Docker compose
-      copy:
+      template:
+        src: ../docker/template.env.j2
         dest: /home/{{ ansible_user }}/docker/.env
-        content: |
-          NB_HOSTNAME={{ inventory_hostname }}
-          NB_SETUP_KEY={{ vault_netbird_setup_key }}
-          GRAFANA_ADMIN_PASSWORD={{ vault_grafana_admin_password }}
-          TZ={{ ansible_date_time.tz }}
-          ZIGBEE_USB_DEVICE={{ adapter_id }}
-          ESPHOME_USERNAME=admin
-          ESPHOME_PASSWORD={{ vault_esphome_password }}
-          LOCAL_IP={{ ansible_default_ipv4.address }}
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
