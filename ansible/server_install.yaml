@@ -27,10 +27,8 @@
         state: started
         enabled: yes
 
-    - name: Check if resolved.conf exists
-      stat:
-        path: /etc/systemd/resolved.conf
-      register: resolved_conf_file
+    - name: Get service facts
+      service_facts:
 
     - name: Set up systemd-resolve to release port 53 for dnsmasq
       lineinfile:
@@ -38,25 +36,16 @@
         regexp: '^#?DNSStubListener='
         line: 'DNSStubListener=no'
         state: present
-      when: resolved_conf_file.stat.exists
+      when: "'systemd-resolved.service' in ansible_facts.services"
+      notify: Restart systemd-resolved
 
-    - name: Restart systemd-resolved to apply changes
-      systemd:
-        name: systemd-resolved
-        state: restarted
-      when: resolved_conf_file.stat.exists
-
-    - name: Delete resolv.conf symlink
-      file:
-        path: /etc/resolv.conf
-        state: absent
-
-    - name: Create new resolv.conf symlink
+    - name: Update resolv.conf symlink
       file:
         src: /run/systemd/resolve/resolv.conf
         dest: /etc/resolv.conf
         state: link
         force: true
+      when: "'systemd-resolved.service' in ansible_facts.services"
 
     - name: Add local hostname resolution
       lineinfile:
@@ -64,6 +53,12 @@
         regexp: '^127\.0\.1\.1'
         line: "127.0.1.1 {{ ansible_hostname }}"
         state: present
+
+  handlers:
+    - name: Restart systemd-resolved
+      systemd:
+        name: systemd-resolved
+        state: restarted
 
 - name: Install Docker
   tags: install
