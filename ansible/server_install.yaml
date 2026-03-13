@@ -33,11 +33,13 @@
         regexp: '^#?DNSStubListener='
         line: 'DNSStubListener=no'
         state: present
+      when: resolved_conf_file.stat.exists
 
     - name: Restart systemd-resolved to apply changes
       systemd:
         name: systemd-resolved
         state: restarted
+      when: resolved_conf_file.stat.exists
 
     - name: Delete resolv.conf symlink
       file:
