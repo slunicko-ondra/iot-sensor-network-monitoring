@@ -27,6 +27,11 @@
         state: started
         enabled: yes
 
+    - name: Check if resolved.conf exists
+      stat:
+        path: /etc/systemd/resolved.conf
+      register: resolved_conf_file
+
     - name: Set up systemd-resolve to release port 53 for dnsmasq
       lineinfile:
         path: /etc/systemd/resolved.conf
