@@ -232,6 +232,13 @@
         group: "{{ ansible_user }}"
         mode: '0644'
 
+    - name: Create Netbird setup key
+      netbird_create_setup_key:
+        api_key: "{{ vault_netbird_token }}"
+        name_prefix: "{{ inventory_hostname }}"
+        type: "one-off"
+      register: netbird_setup_key
+
     - name: Create .env file for Docker compose
       template:
         src: ../docker/template.env.j2
@@ -239,6 +246,10 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
+
+    - name: Set fact for local IP
+      set_fact:
+        local_ip: "{{ ansible_default_ipv4.address }}"
 
     - name: Run Docker Compose (except dnsmasq)
       community.docker.docker_compose_v2:
@@ -294,10 +305,6 @@
     - name: Show dnsmasq-netbird results
       debug:
         var: dnsmasq_netbird_output
-
-    - name: Set fact for local IP
-      set_fact:
-        local_ip: "{{ ansible_default_ipv4.address }}"
 
     - name: Add dnsmasq configuration for local network
       template:
