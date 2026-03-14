@@ -27,9 +27,11 @@
         state: started
         enabled: yes
 
-    - name: Install rsync for file synchronization
+    - name: Install required packages
       apt:
-        name: rsync
+        name:
+          - rsync
+          - python3-pygments
         state: present
         update_cache: yes
 
