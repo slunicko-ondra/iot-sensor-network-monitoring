@@ -27,6 +27,12 @@
         state: started
         enabled: yes
 
+    - name: Install rsync for file synchronization
+      apt:
+        name: rsync
+        state: present
+        update_cache: yes
+
     - name: Get service facts
       service_facts:
 
