@@ -210,6 +210,7 @@
         group: "{{ ansible_user }}"
         mode: '0644'
       when: zigbee2mqtt_config_stat.stat.exists == false or zigbee2mqtt_reset | default(false) | bool
+      notify: Restart docker compose
 
     - name: Stop zigbee2mqtt container if running to reset state
       community.docker.docker_compose_v2:
@@ -233,6 +234,7 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
+      notify: Restart docker compose
 
     - name: Fill NGINX reverse proxy HTML template
       template:
@@ -241,6 +243,7 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
+      notify: Restart docker compose
 
     - name: Create Netbird setup key
       netbird_create_setup_key:
@@ -256,10 +259,24 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
+      notify: Restart docker compose
 
     - name: Set fact for local IP
       set_fact:
         local_ip: "{{ ansible_default_ipv4.address }}"
+
+    - name: Print local IP
+      debug:
+        msg: "Local IP address detected: {{ local_ip }}"
+
+    - name: Fill Prometheus configuration template
+      template:
+        src: ../docker/prometheus/prometheus.yml.j2
+        dest: /home/{{ ansible_user }}/docker/prometheus/prometheus.yml
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+      notify: Restart docker compose
 
     - name: Run Docker Compose (except dnsmasq)
       community.docker.docker_compose_v2:
@@ -303,6 +320,7 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
+      notify: Restart docker compose
 
     - name: Run dnsmasq-netbird container
       community.docker.docker_compose_v2:
@@ -323,6 +341,7 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
+      notify: Restart docker compose
 
     - name: Run dnsmasq-local container
       community.docker.docker_compose_v2:
@@ -335,6 +354,12 @@
     - name: Show dnsmasq-local results
       debug:
         var: dnsmasq_local_output
+
+  handlers:
+    - name: Restart docker compose
+      community.docker.docker_compose_v2:
+        project_src: /home/{{ ansible_user }}/docker/
+        state: restarted
 
 - name: Set up Netbird DNS
   hosts: servers
