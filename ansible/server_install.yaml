@@ -145,10 +145,18 @@
   vars_files:
     - vault.yaml
   tasks:
+    - name: Create directory for Docker compose
+      file:
+        path: /srv/iot_stack/docker/
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
     - name: Copy docker folder to server
       synchronize:
         src: ../docker/
-        dest: /home/{{ ansible_user }}/docker/
+        dest: /srv/iot_stack/docker/
 
     # Zigbee adapter configuration tasks
     - name: Find Zigbee adapter
@@ -199,13 +207,13 @@
 
     - name: Check if zigbee2mqtt configuration file exists
       stat:
-        path: /home/{{ ansible_user }}/docker/zigbee2mqtt/configuration.yaml
+        path: /srv/iot_stack/docker/zigbee2mqtt/configuration.yaml
       register: zigbee2mqtt_config_stat
 
     - name: Fill zigbee2mqtt configuration template
       template:
         src: ../docker/zigbee2mqtt/configuration.yaml.j2
-        dest: /home/{{ ansible_user }}/docker/zigbee2mqtt/configuration.yaml
+        dest: /srv/iot_stack/docker/zigbee2mqtt/configuration.yaml
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
@@ -214,7 +222,7 @@
 
     - name: Stop zigbee2mqtt container if running to reset state
       community.docker.docker_compose_v2:
-        project_src: /home/{{ ansible_user }}/docker/
+        project_src: /srv/iot_stack/docker/
         state: absent
         services:
           - zigbee2mqtt
@@ -222,7 +230,7 @@
 
     - name: Remove coordinator backup to reset zigbee2mqtt state
       file:
-        path: /home/{{ ansible_user }}/docker/zigbee2mqtt/coordinator_backup.json
+        path: /srv/iot_stack/docker/zigbee2mqtt/coordinator_backup.json
         state: absent
       when: zigbee2mqtt_reset | default(false) | bool
 
@@ -230,7 +238,7 @@
     - name: Fill NGINX reverse proxy configuration template
       template:
         src: ../docker/nginx/conf.d/default.conf.j2
-        dest: /home/{{ ansible_user }}/docker/nginx/conf.d/default.conf
+        dest: /srv/iot_stack/docker/nginx/conf.d/default.conf
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
@@ -239,7 +247,7 @@
     - name: Fill NGINX reverse proxy HTML template
       template:
         src: ../docker/nginx/html/index.html.j2
-        dest: /home/{{ ansible_user }}/docker/nginx/html/index.html
+        dest: /srv/iot_stack/docker/nginx/html/index.html
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
@@ -255,7 +263,7 @@
     - name: Create .env file for Docker compose
       template:
         src: ../docker/template.env.j2
-        dest: /home/{{ ansible_user }}/docker/.env
+        dest: /srv/iot_stack/docker/.env
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
@@ -272,7 +280,7 @@
     - name: Fill Prometheus configuration template
       template:
         src: ../docker/prometheus/prometheus.yml.j2
-        dest: /home/{{ ansible_user }}/docker/prometheus/prometheus.yml
+        dest: /srv/iot_stack/docker/prometheus/prometheus.yml
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
@@ -280,7 +288,7 @@
 
     - name: Run Docker Compose (except dnsmasq)
       community.docker.docker_compose_v2:
-        project_src: /home/{{ ansible_user }}/docker/
+        project_src: /srv/iot_stack/docker/
         state: present
         services:
           - prometheus
@@ -316,7 +324,7 @@
     - name: Add dnsmasq configuration for Netbird IP
       template:
         src: ../docker/dnsmasq-netbird/dnsmasq.conf.j2
-        dest: /home/{{ ansible_user }}/docker/dnsmasq-netbird/dnsmasq.conf
+        dest: /srv/iot_stack/docker/dnsmasq-netbird/dnsmasq.conf
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
@@ -324,7 +332,7 @@
 
     - name: Run dnsmasq-netbird container
       community.docker.docker_compose_v2:
-        project_src: /home/{{ ansible_user }}/docker/
+        project_src: /srv/iot_stack/docker/
         state: present
         services:
           - dnsmasq-netbird
@@ -337,7 +345,7 @@
     - name: Add dnsmasq configuration for local network
       template:
         src: ../docker/dnsmasq-local/dnsmasq.conf.j2
-        dest: /home/{{ ansible_user }}/docker/dnsmasq-local/dnsmasq.conf
+        dest: /srv/iot_stack/docker/dnsmasq-local/dnsmasq.conf
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
@@ -345,7 +353,7 @@
 
     - name: Run dnsmasq-local container
       community.docker.docker_compose_v2:
-        project_src: /home/{{ ansible_user }}/docker/
+        project_src: /srv/iot_stack/docker/
         state: present
         services:
           - dnsmasq-local
@@ -358,7 +366,7 @@
   handlers:
     - name: Restart docker compose
       community.docker.docker_compose_v2:
-        project_src: /home/{{ ansible_user }}/docker/
+        project_src: /srv/iot_stack/docker/
         state: restarted
 
 - name: Set up Netbird DNS
