@@ -157,6 +157,15 @@
       synchronize:
         src: ../docker/
         dest: /srv/iot_stack/docker/
+        rsync_opts:
+          - "--exclude=*.j2"
+
+    - name: Ensure Grafana folder has correct permissions
+      file:
+        path: /srv/iot_stack/docker/grafana
+        state: directory
+        mode: 'u=rwX,g=rX,o=rX'
+        recurse: yes
 
     # Zigbee adapter configuration tasks
     - name: Find Zigbee adapter
@@ -235,6 +244,12 @@
       when: zigbee2mqtt_reset | default(false) | bool
 
     # NGINX reverse proxy configuration tasks
+    - name: Ensure NGINX html folder has correct permissions
+      file:
+        path: /srv/iot_stack/docker/nginx/html
+        state: directory
+        mode: '0755'
+
     - name: Fill NGINX reverse proxy configuration template
       template:
         src: ../docker/nginx/conf.d/default.conf.j2
