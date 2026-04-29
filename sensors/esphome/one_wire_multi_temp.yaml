@@ -1,0 +1,62 @@
+esphome:
+  name: multi-temperature-sensor
+
+esp8266:
+  board: esp01_1m
+
+logger:
+
+api:
+  encryption:
+    key: "FUFbL5XSBe7zYaGlqitilzIKNElXxRiIltbjnQKcXMQ="
+  reboot_timeout: 0s
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  manual_ip:
+    static_ip: 10.0.0.42
+    gateway: 10.0.0.138
+    subnet: 255.255.255.0
+  ap:
+    ssid: "multi temp hotspot"
+    password: "kProm2iSDJDm"
+
+ota:
+  - platform: esphome
+
+mqtt:
+  broker: 10.0.0.131
+  port: 1883
+  discovery: true
+  topic_prefix: solar-sensor
+  birth_message:
+    topic: solar-sensor/status
+    payload: "online"
+    retain: true
+
+one_wire:
+  - platform: gpio
+    pin: GPIO0
+
+sensor:
+  - platform: dallas_temp
+    index: 0
+    name: temperature0
+    update_interval: 10s
+  - platform: dallas_temp
+    index: 1
+    name: temperature1
+    update_interval: 10s
+  - platform: dallas_temp
+    index: 2
+    name: temperature2
+    update_interval: 10s
+  - platform: dallas_temp
+    index: 3
+    name: temperature3
+    update_interval: 10s
+  - platform: dallas_temp
+    index: 4
+    name: temperature4
+    update_interval: 10s
