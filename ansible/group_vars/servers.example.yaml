@@ -24,6 +24,9 @@ zigbee2mqtt_reset: false
 # Different services are available under different subdomains, for example: grafana.my-domain.internal, etc.
 domain_name: my-domain.internal
 
+# Base directory for IoT stack Docker containers configuration and data.
+iot_base_dir: /srv/iot_stack/docker
+
 # Image versions for Docker containers
 # If a variable is not set or is empty, the latest version of the image will be used.
 # prometheus_version: "<tag>"

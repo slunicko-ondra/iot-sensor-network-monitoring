@@ -1,0 +1,43 @@
+---
+# roles/iot_stack/tasks/containers.yaml
+- name: Fill NGINX reverse proxy configuration template
+  template:
+    src: ../docker/nginx/conf.d/default.conf.j2
+    dest: "{{ iot_base_dir }}/nginx/conf.d/default.conf"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+  notify: Restart docker compose
+
+- name: Fill NGINX reverse proxy HTML template
+  template:
+    src: ../docker/nginx/html/index.html.j2
+    dest: "{{ iot_base_dir }}/nginx/html/index.html"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+  notify: Restart docker compose
+
+- name: Fill Prometheus configuration template
+  template:
+    src: ../docker/prometheus/prometheus.yml.j2
+    dest: "{{ iot_base_dir }}/prometheus/prometheus.yml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+  notify: Restart docker compose
+
+- name: Run Docker Compose (except netbird and dnsmasq)
+  community.docker.docker_compose_v2:
+    project_src: "{{ iot_base_dir }}/"
+    state: present
+    services:
+      - prometheus
+      - grafana
+      - mosquitto
+      - mqtt-exporter
+      - node-exporter
+      - zigbee2mqtt
+      - homeassistant
+      - nginx-reverse-proxy
+      - esphome

@@ -1,0 +1,24 @@
+---
+# roles/netbird_dns/tasks/main.yaml
+- name: Wait for Netbird IP
+  shell: "ip -4 addr show wt0 | awk '/inet / {print $2}' | cut -d/ -f1"
+  register: netbird_ip_result
+  retries: 10
+  delay: 6
+  until: netbird_ip_result.stdout != ""
+  changed_when: false
+
+- name: Set fact for Netbird IP
+  set_fact:
+    netbird_ip: "{{ netbird_ip_result.stdout }}"
+
+- name: Add nameserver
+  netbird_add_nameserver_group:
+    api_key: "{{ vault_netbird_token }}"
+    name: "{{ inventory_hostname }} dnsmasq"
+    description: "Nameserver group added by Ansible playbook via Netbird API for dnsmasq running on {{ inventory_hostname }}"
+    nameservers:
+      - ip: "{{ netbird_ip }}"
+        port: 5053
+    groups:
+      - "All"

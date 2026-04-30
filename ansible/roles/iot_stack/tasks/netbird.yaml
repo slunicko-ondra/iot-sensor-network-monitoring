@@ -1,0 +1,24 @@
+---
+# roles/iot_stack/tasks/netbird.yaml
+- name: Run Netbird client first to acquire IP
+  community.docker.docker_compose_v2:
+    project_src: /srv/iot_stack/docker/
+    state: present
+    services:
+      - netbird-client
+
+- name: Wait for Netbird IP
+  shell: "ip -4 addr show wt0 | awk '/inet / {print $2}' | cut -d/ -f1"
+  register: netbird_ip_result
+  retries: 10
+  delay: 6
+  until: netbird_ip_result.stdout != ""
+  changed_when: false
+
+- name: Set fact for Netbird IP
+  set_fact:
+    netbird_ip: "{{ netbird_ip_result.stdout }}"
+
+- name: Print Netbird setup key and IP
+  debug:
+    msg: "Netbird setup key created: {{ netbird_setup_key.key }}. Netbird IP address: {{ netbird_ip }}"

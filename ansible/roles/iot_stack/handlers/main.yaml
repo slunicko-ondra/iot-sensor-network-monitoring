@@ -1,0 +1,6 @@
+---
+# roles/iot_stack/handlers/main.yaml
+- name: Restart docker compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ iot_base_dir }}/"
+    state: restarted

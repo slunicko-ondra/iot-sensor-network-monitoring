@@ -1,0 +1,59 @@
+---
+# roles/system_setup/tasks/main.yaml
+- name: Set up paswordless sudo for ansible user
+  copy:
+    dest: /etc/sudoers.d/ansible
+    content: "{{ ansible_user }} ALL=(ALL) NOPASSWD:ALL"
+    mode: '0440'
+    validate: 'visudo -cf %s'
+
+- name: Set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Install avahi-daemon for mDNS support
+  apt:
+    name: avahi-daemon
+    state: present
+    update_cache: yes
+
+- name: Enable and start avahi-daemon
+  systemd:
+    name: avahi-daemon
+    state: started
+    enabled: yes
+
+- name: Install required packages
+  apt:
+    name:
+      - rsync
+      - python3-pygments
+    state: present
+    update_cache: yes
+
+- name: Get service facts
+  service_facts:
+
+- name: Set up systemd-resolve to release port 53 for dnsmasq
+  lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: '^#?DNSStubListener='
+    line: 'DNSStubListener=no'
+    state: present
+  when: "'systemd-resolved.service' in ansible_facts.services"
+  notify: Restart systemd-resolved
+
+- name: Update resolv.conf symlink
+  file:
+    src: /run/systemd/resolve/resolv.conf
+    dest: /etc/resolv.conf
+    state: link
+    force: true
+  when: "'systemd-resolved.service' in ansible_facts.services"
+
+- name: Add local hostname resolution
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '^127\.0\.1\.1'
+    line: "127.0.1.1 {{ ansible_hostname }}"
+    state: present

@@ -1,0 +1,70 @@
+---
+# roles/iot_stack/tasks/prepare.yaml
+- name: Set fact for local IP
+  set_fact:
+    local_ip: "{{ ansible_default_ipv4.address }}"
+
+- name: Print local IP
+  debug:
+    msg: "Local IP address detected: {{ local_ip }}"
+
+- name: Create directory for Docker compose
+  file:
+    path: "{{ iot_base_dir }}/"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Copy docker folder to server
+  synchronize:
+    src: ../docker/
+    dest: "{{ iot_base_dir }}/"
+    rsync_opts:
+      - "--exclude=*.j2"
+
+- name: Ensure Grafana folder has correct permissions
+  file:
+    path: "{{ iot_base_dir }}/grafana"
+    state: directory
+    mode: 'u=rwX,g=rX,o=rX'
+    recurse: yes
+
+- name: Ensure NGINX html folder has correct permissions
+  file:
+    path: "{{ iot_base_dir }}/nginx/html"
+    state: directory
+    mode: '0755'
+
+- name: Create Netbird setup key
+  netbird_create_setup_key:
+    api_key: "{{ vault_netbird_token }}"
+    name_prefix: "{{ inventory_hostname }}"
+    type: "one-off"
+  register: netbird_setup_key
+
+- name: Create .env file for Docker compose
+  template:
+    src: ../docker/template.env.j2
+    dest: "{{ iot_base_dir }}/.env"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+  notify: Restart docker compose
+
+- name: Pull Docker images individually to show progress
+  community.docker.docker_image:
+    name: "{{ item }}"
+    source: pull
+  loop:
+    - "prom/prometheus:{{ prometheus_version | default('latest', true) }}"
+    - "grafana/grafana:{{ grafana_version | default('latest', true) }}"
+    - "eclipse-mosquitto:{{ mosquitto_version | default('latest', true) }}"
+    - "kpetrem/mqtt-exporter:{{ mqtt_exporter_version | default('latest', true) }}"
+    - "quay.io/prometheus/node-exporter:{{ node_exporter_version | default('latest', true) }}"
+    - "netbirdio/netbird:{{ netbird_client_version | default('latest', true) }}"
+    - "ghcr.io/koenkk/zigbee2mqtt:{{ zigbee2mqtt_version | default('latest', true) }}"
+    - "ghcr.io/home-assistant/home-assistant:{{ home_assistant_version | default('stable', true) }}"
+    - "nginx:{{ nginx_version | default('latest', true) }}"
+    - "ghcr.io/esphome/esphome:{{ esphome_version | default('latest', true) }}"
+    - "dockurr/dnsmasq:{{ dnsmasq_version | default('latest', true) }}"
