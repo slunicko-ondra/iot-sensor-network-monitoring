@@ -16,7 +16,7 @@ scrape_configs:
 
   - job_name: "homeassistant"
     metrics_path: "/api/prometheus"
-    bearer_token: "{{ ha_bearer_token }}" # TODO
+    bearer_token: "{{ ha_bearer_token | default('CHANGE_ME') }}"
     static_configs:
       - targets:
         - "{{ local_ip }}:8123"

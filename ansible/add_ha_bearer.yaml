@@ -1,0 +1,24 @@
+---
+- name: Update Prometheus with Home Assistant Bearer Token
+  hosts: servers
+  become: yes
+  tasks:
+    - name: Fail if token is not provided
+      fail:
+        msg: "Please provide the token using: -e 'ha_bearer_token=YOUR_TOKEN'"
+      when: ha_bearer_token is not defined or ha_bearer_token == 'CHANGE_ME'
+
+    - name: Fill Prometheus configuration template with new token
+      template:
+        src: roles/iot_stack/templates/prometheus/prometheus.yml.j2
+        dest: "{{ iot_base_dir }}/prometheus/prometheus.yml"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+
+    - name: Restart Prometheus container to apply token
+      community.docker.docker_compose_v2:
+        project_src: "{{ iot_base_dir }}/"
+        state: restarted
+        services:
+          - prometheus

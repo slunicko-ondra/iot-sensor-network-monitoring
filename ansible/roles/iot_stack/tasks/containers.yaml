@@ -29,7 +29,7 @@
 
 - name: Notify about upcoming download
   debug:
-    msg: "Starting Docker Compose. The first run will download all images. This may take 10-30 minutes. Please wait..."
+    msg: "Starting Docker Compose. The first run will download all images. This may take 10-20 minutes. Please wait..."
 
 - name: Run Docker Compose (except netbird and dnsmasq)
   community.docker.docker_compose_v2:
