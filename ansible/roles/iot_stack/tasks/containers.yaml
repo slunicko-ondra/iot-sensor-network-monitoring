@@ -2,7 +2,7 @@
 # roles/iot_stack/tasks/containers.yaml
 - name: Fill NGINX reverse proxy configuration template
   template:
-    src: ../docker/nginx/conf.d/default.conf.j2
+    src: "{{ role_path }}/templates/nginx/conf.d/default.conf.j2"
     dest: "{{ iot_base_dir }}/nginx/conf.d/default.conf"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -11,7 +11,7 @@
 
 - name: Fill NGINX reverse proxy HTML template
   template:
-    src: ../docker/nginx/html/index.html.j2
+    src: "{{ role_path }}/templates/nginx/html/index.html.j2"
     dest: "{{ iot_base_dir }}/nginx/html/index.html"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -20,12 +20,16 @@
 
 - name: Fill Prometheus configuration template
   template:
-    src: ../docker/prometheus/prometheus.yml.j2
+    src: "{{ role_path }}/templates/prometheus/prometheus.yml.j2"
     dest: "{{ iot_base_dir }}/prometheus/prometheus.yml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: '0644'
   notify: Restart docker compose
+
+- name: Notify about upcoming download
+  debug:
+    msg: "Starting Docker Compose. The first run will download all images. This may take 10-30 minutes. Please wait..."
 
 - name: Run Docker Compose (except netbird and dnsmasq)
   community.docker.docker_compose_v2:

@@ -16,6 +16,12 @@ zigbee2mqtt_autodetect: false
 # For more details see: https://www.zigbee2mqtt.io/guide/configuration/adapter-settings.html#basic-configuration
 zigbee_usb_adapter_override: zstack
 
+# If you need to bypass automatic device discovery, specify the full absolute path to the Zigbee USB adapter.
+# This is useful for custom mappings, systems with multiple adapters, or testing without physical hardware.
+# values: absolute device paths (e.g., /dev/serial/by-id/usb-..., /dev/ttyUSB0) or /dev/null for testing.
+# Note: If left empty ("") or not defined, the playbook will attempt to auto-detect the device in /dev/serial/by-id/.
+zigbee_usb_device_path_override: ""
+
 # Resets Zigbee2MQTT configuration on every playbook run.
 zigbee2mqtt_reset: false
 

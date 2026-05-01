@@ -2,7 +2,7 @@
 # roles/iot_stack/tasks/dns.yaml
 - name: Add dnsmasq configuration for Netbird IP
   template:
-    src: ../docker/dnsmasq-netbird/dnsmasq.conf.j2
+    src: "{{ role_path }}/templates/dnsmasq-netbird/dnsmasq.conf.j2"
     dest: "{{ iot_base_dir }}/dnsmasq-netbird/dnsmasq.conf"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -18,7 +18,7 @@
 
 - name: Add dnsmasq configuration for local network
   template:
-    src: ../docker/dnsmasq-local/dnsmasq.conf.j2
+    src: "{{ role_path }}/templates/dnsmasq-local/dnsmasq.conf.j2"
     dest: "{{ iot_base_dir }}/dnsmasq-local/dnsmasq.conf"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"

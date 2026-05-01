@@ -92,7 +92,7 @@ services:
     environment:
       - TZ=${TZ}
     devices:
-      - /dev/serial/by-id/${ZIGBEE_USB_DEVICE}:/dev/ttyACM0
+      - ${ZIGBEE_USB_DEVICE}:/dev/ttyACM0
 
   homeassistant:
     image: "ghcr.io/home-assistant/home-assistant:${HOME_ASSISTANT_VERSION:-stable}"

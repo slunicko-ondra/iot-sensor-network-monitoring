@@ -1,0 +1,17 @@
+---
+# roles/iot_stack/tasks/configure.yaml
+- name: Create Netbird setup key
+  netbird_create_setup_key:
+    api_key: "{{ vault_netbird_token }}"
+    name_prefix: "{{ inventory_hostname }}"
+    type: "one-off"
+  register: netbird_setup_key
+
+- name: Create .env file for Docker compose
+  template:
+    src: "{{ role_path }}/templates/template.env.j2"
+    dest: "{{ iot_base_dir }}/.env"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+  notify: Restart docker compose
