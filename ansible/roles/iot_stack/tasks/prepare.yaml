@@ -20,8 +20,6 @@
   synchronize:
     src: "{{ role_path }}/files/docker/"
     dest: "{{ iot_base_dir }}/"
-    rsync_opts:
-      - "--exclude=*.j2"
 
 - name: Ensure all required configuration directories exist
   file:
@@ -32,6 +30,8 @@
     mode: '0755'
   loop:
     - zigbee2mqtt
+    - homeassistant/config
+    - mosquitto/config
     - nginx/conf.d
     - nginx/html
     - prometheus

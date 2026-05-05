@@ -46,3 +46,5 @@ iot_base_dir: /srv/iot_stack/docker
 # nginx_version: "<tag>"
 # esphome_version: "<tag>"
 # dnsmasq_version: "<tag>"
+
+# MQTT credentials are stored in `vault.yaml` and reused by Mosquitto, Zigbee2MQTT, Home Assistant and mqtt-exporter.
