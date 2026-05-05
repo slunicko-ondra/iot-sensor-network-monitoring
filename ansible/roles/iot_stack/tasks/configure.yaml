@@ -13,5 +13,19 @@
     dest: "{{ iot_base_dir }}/.env"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: '0644'
+    mode: '0600'
+  no_log: true
   notify: Restart docker compose
+
+- name: Create MQTT password change marker
+  copy:
+    dest: "{{ iot_base_dir }}/mosquitto/config/passwordfile.sha256"
+    content: "{{ vault_mqtt_username }}:{{ vault_mqtt_password | hash('sha256') }}\n"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+  no_log: true
+  notify:
+    - Generate Mosquitto password file
+    - Fix Mosquitto password file permissions
+    - Restart docker compose

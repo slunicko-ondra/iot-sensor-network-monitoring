@@ -10,7 +10,7 @@
     paths: /dev/serial/by-id/
     file_type: link
   register: found_zigbee_devices
-  when: serial_dir.stat.exists and (zigbee_usb_device_path_override | default("")) == ""
+  when: serial_dir.stat.exists and (zigbee_usb_device_path_override | default("") == "")
 
 - name: Set adapter full path fact
   set_fact:

@@ -40,11 +40,15 @@ services:
   mqtt-exporter:
     image: "kpetrem/mqtt-exporter:${MQTT_EXPORTER_VERSION:-latest}"
     container_name: mqtt-exporter
+    depends_on:
+      - mosquitto
     restart: always
     ports:
       - '9000:9000'
     environment:
       - MQTT_ADDRESS=mosquitto
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
       - MQTT_IGNORED_TOPICS=zigbee2mqtt/bridge/*,zigbee2mqtt/config/*,zigbee2mqtt/clusters/*
 
   node-exporter:

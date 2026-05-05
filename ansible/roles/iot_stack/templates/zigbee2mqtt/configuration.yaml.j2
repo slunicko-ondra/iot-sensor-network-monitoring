@@ -12,8 +12,8 @@ frontend:
 mqtt:
     base_topic: zigbee2mqtt
     server: "mqtt://mosquitto:1883"
-    # user: my_user
-    # password: my_password
+    user: "{{ vault_mqtt_username }}"
+    password: "{{ vault_mqtt_password }}"
 
 {% if zigbee2mqtt_autodetect | bool == false %}
 # Serial settings, only required when Zigbee2MQTT fails to start with:

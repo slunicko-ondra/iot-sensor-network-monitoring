@@ -35,6 +35,10 @@ captive_portal:
 
 mqtt:
   broker: 10.0.10.12
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  discovery: true
   log_topic:
     topic: "temperature-single/debug"
     level: WARN
