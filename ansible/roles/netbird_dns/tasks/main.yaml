@@ -22,3 +22,6 @@
         port: 5053
     groups:
       - "All"
+    primary: false
+    domains:
+      - "{{ domain_name }}"
