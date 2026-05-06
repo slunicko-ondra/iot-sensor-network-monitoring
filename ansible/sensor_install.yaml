@@ -1,10 +1,8 @@
 ---
-- name: Test ESPHome modules
+- name: Install ESPHome firmware to sensors
   hosts: sensors
   tags: test
   gather_facts: false
-  collections:
-    - local.esphome_api
   tasks:
     - name: Set up virtual environment
       pip:
