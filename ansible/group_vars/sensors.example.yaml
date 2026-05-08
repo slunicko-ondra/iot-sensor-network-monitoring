@@ -1,0 +1,10 @@
+# Wi-Fi and MQTT credentials are stored in `vault.yaml` and used to generate the ESPHome secrets file.
+
+# Connection type for Ansible.
+# Since sensors are typically built and configured locally, we use the local connection type.
+# This means that Ansible will execute tasks directly on the local machine where the playbook is run,
+# rather than connecting to remote hosts via SSH or other methods.
+ansible_connection: local
+
+# Disable fact gathering for sensors, as it would not work with ESP devices and is not necessary for our use case.
+ansible_gather_facts: false

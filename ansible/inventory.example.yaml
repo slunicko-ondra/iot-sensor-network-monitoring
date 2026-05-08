@@ -1,0 +1,14 @@
+all:
+  children:
+    servers:
+      hosts:
+        my-server:  # set server name
+          ansible_host: <IP_ADDRESS>  # set server IP address
+          # for other variables check `group_vars/all.exmaple.yaml` and `group_vars/servers.example.yaml`
+
+    sensors:
+      hosts:
+        my-sensor:  # set sensor name
+          ansible_host: <HOST> # set sensor host (IP address or serial port path)
+          config_name: "my_sensor"  # set sensor config file name (without .yaml extension)
+          # for other variables check `group_vars/all.exmaple.yaml` and `group_vars/sensors.example.yaml`

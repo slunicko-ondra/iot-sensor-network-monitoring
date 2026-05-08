@@ -1,8 +1,6 @@
 ---
 - name: Install ESPHome firmware to sensors
   hosts: sensors
-  tags: test
-  gather_facts: false
   tasks:
     - name: Set up virtual environment
       pip:
@@ -25,4 +23,4 @@
     - name: Install firmware to device
       esphome_run:
         host: "{{ inventory_hostname }}"
-        config_path: "{{ playbook_dir }}/../sensors/esphome/{{ config_name }}.yaml"
+        config_path: "{{ playbook_dir }}/../sensors/esphome/{{ config_file }}"
