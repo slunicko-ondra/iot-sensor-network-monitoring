@@ -33,6 +33,10 @@ captive_portal:
 
 mqtt:
   broker: 10.0.0.42
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  discovery: true
   log_topic:
     topic: "esphome/teplota-esp-01s/debug"
     level: WARN

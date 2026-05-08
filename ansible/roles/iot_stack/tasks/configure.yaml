@@ -1,0 +1,31 @@
+---
+# roles/iot_stack/tasks/configure.yaml
+- name: Create Netbird setup key
+  netbird_create_setup_key:
+    api_key: "{{ vault_netbird_token }}"
+    name_prefix: "{{ inventory_hostname }}"
+    type: "one-off"
+  register: netbird_setup_key
+
+- name: Create .env file for Docker compose
+  template:
+    src: "{{ role_path }}/templates/template.env.j2"
+    dest: "{{ iot_base_dir }}/.env"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+  no_log: true
+  notify: Restart docker compose
+
+- name: Create MQTT password change marker
+  copy:
+    dest: "{{ iot_base_dir }}/mosquitto/config/passwordfile.sha256"
+    content: "{{ vault_mqtt_username }}:{{ vault_mqtt_password | hash('sha256') }}\n"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+  no_log: true
+  notify:
+    - Generate Mosquitto password file
+    - Fix Mosquitto password file permissions
+    - Restart docker compose

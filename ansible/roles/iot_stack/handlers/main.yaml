@@ -1,0 +1,31 @@
+---
+# roles/iot_stack/handlers/main.yaml
+- name: Generate Mosquitto password file
+  command:
+    argv:
+      - docker
+      - run
+      - --rm
+      - --entrypoint
+      - mosquitto_passwd
+      - -v
+      - "{{ iot_base_dir }}/mosquitto/config:/mosquitto/config"
+      - "eclipse-mosquitto:{{ mosquitto_version | default('latest') }}"
+      - -b
+      - -c
+      - /mosquitto/config/passwordfile
+      - "{{ vault_mqtt_username }}"
+      - "{{ vault_mqtt_password }}"
+  no_log: true
+
+- name: Fix Mosquitto password file permissions
+  file:
+    path: "{{ iot_base_dir }}/mosquitto/config/passwordfile"
+    owner: "1883"
+    group: "1883"
+    mode: "0700"
+
+- name: Restart docker compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ iot_base_dir }}/"
+    state: restarted

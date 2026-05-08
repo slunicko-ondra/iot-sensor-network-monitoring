@@ -10,3 +10,12 @@ vault_grafana_admin_password:
 
 # Password for ESPHome.
 vault_esphome_password:
+
+# MQTT credentials shared by Mosquitto and all MQTT clients.
+# Use a dedicated non-admin user and a strong random password.
+vault_mqtt_username:
+vault_mqtt_password:
+
+# Home Assistant long-lived access token used by Prometheus to scrape /api/prometheus.
+# You can create it in Home Assistant: Profile -> Create Token.
+ha_bearer_token:

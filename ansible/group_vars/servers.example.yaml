@@ -16,6 +16,12 @@ zigbee2mqtt_autodetect: false
 # For more details see: https://www.zigbee2mqtt.io/guide/configuration/adapter-settings.html#basic-configuration
 zigbee_usb_adapter_override: zstack
 
+# If you need to bypass automatic device discovery, specify the full absolute path to the Zigbee USB adapter.
+# This is useful for custom mappings, systems with multiple adapters, or testing without physical hardware.
+# values: absolute device paths (e.g., /dev/serial/by-id/usb-..., /dev/ttyUSB0) or /dev/null for testing.
+# Note: If left empty ("") or not defined, the playbook will attempt to auto-detect the device in /dev/serial/by-id/.
+zigbee_usb_device_path_override: ""
+
 # Resets Zigbee2MQTT configuration on every playbook run.
 zigbee2mqtt_reset: false
 
@@ -23,6 +29,9 @@ zigbee2mqtt_reset: false
 # It can be any domain name because it's only used for local network (and Netbird) and won't be accessible from the internet.
 # Different services are available under different subdomains, for example: grafana.my-domain.internal, etc.
 domain_name: my-domain.internal
+
+# Base directory for IoT stack Docker containers configuration and data.
+iot_base_dir: /srv/iot_stack/docker
 
 # Image versions for Docker containers
 # If a variable is not set or is empty, the latest version of the image will be used.
@@ -37,3 +46,5 @@ domain_name: my-domain.internal
 # nginx_version: "<tag>"
 # esphome_version: "<tag>"
 # dnsmasq_version: "<tag>"
+
+# MQTT credentials are stored in `vault.yaml` and reused by Mosquitto, Zigbee2MQTT, Home Assistant and mqtt-exporter.

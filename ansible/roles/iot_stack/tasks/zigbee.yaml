@@ -1,0 +1,89 @@
+---
+# roles/iot_stack/tasks/zigbee.yaml
+- name: Check if /dev/serial/by-id exists
+  stat:
+    path: /dev/serial/by-id/
+  register: serial_dir
+
+- name: Find Zigbee adapter
+  find:
+    paths: /dev/serial/by-id/
+    file_type: link
+  register: found_zigbee_devices
+  when: serial_dir.stat.exists and (zigbee_usb_device_path_override | default("") == "")
+
+- name: Set adapter full path fact
+  set_fact:
+    adapter_path: >-
+      {% if zigbee_usb_device_path_override is defined and zigbee_usb_device_path_override != '' %}
+        {{ zigbee_usb_device_path_override }}
+      {% elif found_zigbee_devices is defined and found_zigbee_devices.matched | default(0) > 0 %}
+        {{ found_zigbee_devices.files[0].path }}
+      {% else %}
+        ''
+      {% endif %}
+
+- name: Fail if adapter was not found
+  fail:
+    msg: "No Zigbee adapter found in /dev/serial/by-id/. Please connect a compatible Zigbee USB adapter or use zigbee_usb_device_path_override variable."
+  when: adapter_path == ''
+
+- name: Set adapter type fact
+  set_fact:
+    # Adapter type ZiGate is not maintained by Zigbee2MQTT!
+    # Adapter type ZBOSS is an experimental feature of Zigbee2MQTT!
+    adapter_type: >-
+      {% if zigbee_usb_adapter_override is defined and zigbee_usb_adapter_override != '' %}
+        {{ zigbee_usb_adapter_override }}
+      {% elif adapter_path is search('zstack|texas.instruments', ignorecase=True) %}
+        zstack
+      {% elif adapter_path is search('ember|silicon.labs', ignorecase=True) %}
+        ember
+      {% elif adapter_path is search('deconz|dresden.elektronik', ignorecase=True) %}
+        deconz
+      {% elif adapter_path is search('zigate', ignorecase=True) %}
+        zigate
+      {% elif adapter_path is search('zboss|nordic.semiconductor', ignorecase=True) %}
+        zboss
+      {% else %}
+        unknown
+      {% endif %}
+  when: zigbee2mqtt_autodetect | bool == false
+
+- name: Fail if adapter type is unknown
+  fail:
+    msg: "Unknown Zigbee adapter type detected for device {{ adapter_path }}. Please specify the adapter type using the zigbee_usb_adapter_override variable."
+  when: zigbee2mqtt_autodetect | bool == false and adapter_type == 'unknown'
+
+- name: Print Zigbee adapter name
+  debug:
+    msg: "Zigbee adapter detected: {{ adapter_path }} (type: {{ adapter_type | default('auto-detected') }})"
+
+- name: Check if zigbee2mqtt configuration file exists
+  stat:
+    path: "{{ iot_base_dir }}/zigbee2mqtt/configuration.yaml"
+  register: zigbee2mqtt_config_stat
+
+- name: Fill zigbee2mqtt configuration template
+  template:
+    src: "{{ role_path }}/templates/zigbee2mqtt/configuration.yaml.j2"
+    dest: "{{ iot_base_dir }}/zigbee2mqtt/configuration.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+  when: zigbee2mqtt_config_stat.stat.exists == false or zigbee2mqtt_reset | default(false) | bool
+  notify: Restart docker compose
+
+- name: Stop zigbee2mqtt container if running to reset state
+  community.docker.docker_compose_v2:
+    project_src: "{{ iot_base_dir }}/"
+    state: absent
+    services:
+      - zigbee2mqtt
+  when: zigbee2mqtt_reset | default(false) | bool
+
+- name: Remove coordinator backup to reset zigbee2mqtt state
+  file:
+    path: "{{ iot_base_dir }}/zigbee2mqtt/coordinator_backup.json"
+    state: absent
+  when: zigbee2mqtt_reset | default(false) | bool

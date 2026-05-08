@@ -1,0 +1,52 @@
+---
+# roles/iot_stack/tasks/prepare.yaml
+- name: Set fact for local IP
+  set_fact:
+    local_ip: "{{ ansible_default_ipv4.address }}"
+
+- name: Print local IP
+  debug:
+    msg: "Local IP address detected: {{ local_ip }}"
+
+- name: Create directory for Docker compose
+  file:
+    path: "{{ iot_base_dir }}/"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Copy docker folder to server
+  synchronize:
+    src: "{{ role_path }}/files/docker/"
+    dest: "{{ iot_base_dir }}/"
+
+- name: Ensure all required configuration directories exist
+  file:
+    path: "{{ iot_base_dir }}/{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+  loop:
+    - zigbee2mqtt
+    - homeassistant/config
+    - mosquitto/config
+    - nginx/conf.d
+    - nginx/html
+    - prometheus
+    - dnsmasq-netbird
+    - dnsmasq-local
+
+- name: Ensure Grafana folder has correct permissions
+  file:
+    path: "{{ iot_base_dir }}/grafana"
+    state: directory
+    mode: 'u=rwX,g=rX,o=rX'
+    recurse: yes
+
+- name: Ensure NGINX html folder has correct permissions
+  file:
+    path: "{{ iot_base_dir }}/nginx/html"
+    state: directory
+    mode: '0755'

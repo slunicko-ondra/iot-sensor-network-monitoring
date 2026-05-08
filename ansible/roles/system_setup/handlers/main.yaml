@@ -1,0 +1,6 @@
+---
+# roles/system_setup/handlers/main.yaml
+- name: Restart systemd-resolved
+  systemd:
+    name: systemd-resolved
+    state: restarted

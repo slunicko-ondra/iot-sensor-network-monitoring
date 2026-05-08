@@ -1,0 +1,19 @@
+---
+# roles/iot_stack/tasks/main.yaml
+- name: Prepare environment and files
+  import_tasks: prepare.yaml
+
+- name: Configure Zigbee adapter
+  import_tasks: zigbee.yaml
+
+- name: Generate main configuration (.env)
+  import_tasks: configure.yaml
+
+- name: Setup and start Netbird
+  import_tasks: netbird.yaml
+
+- name: Configure and start main IoT stack
+  import_tasks: containers.yaml
+
+- name: Configure and start DNS services
+  import_tasks: dns.yaml
