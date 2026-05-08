@@ -30,7 +30,7 @@
     esphome_config_files: >-
       {{
         query('fileglob', esphome_dir ~ '/*.yaml')
-        | reject('search', '/secrets.*\\.yaml$')
+        | reject('search', '/secrets.*\.yaml$')
         | list
         | sort
       }}
