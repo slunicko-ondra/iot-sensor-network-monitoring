@@ -4,7 +4,6 @@
   set_fact:
     esphome_dir: "{{ playbook_dir }}/../sensors/esphome"
     esphome_secrets_path: "{{ playbook_dir }}/../sensors/esphome/secrets.yaml"
-    esphome_key_script: "{{ playbook_dir }}/../sensors/esphome/scripts/generate_key.sh"
 
 - name: Validate required ESPHome secret variables
   assert:
@@ -14,6 +13,17 @@
       - vault_mqtt_username is defined
       - vault_mqtt_password is defined
     fail_msg: "ESPHome Wi-Fi and MQTT credentials must be defined in `vault.yaml`."
+
+- name: Check if openssl is installed locally
+  command: openssl version
+  register: openssl_check
+  ignore_errors: yes
+  changed_when: false
+
+- name: Fail if openssl is missing
+  assert:
+    that: openssl_check.rc == 0
+    fail_msg: "OpenSSL is required to generate ESPHome secret keys. Please install OpenSSL and try again."
 
 - name: Collect ESPHome configuration files
   set_fact:
@@ -82,7 +92,7 @@
   no_log: true
 
 - name: Generate missing ESPHome secret keys
-  command: sh "{{ esphome_key_script }}"
+  command: openssl rand -base64 32
   register: esphome_generated_key_results
   loop: "{{ esphome_missing_secret_names }}"
   when: esphome_missing_secret_names | length > 0

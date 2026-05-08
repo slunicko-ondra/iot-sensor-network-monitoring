@@ -1,0 +1,48 @@
+---
+# roles/prepare_esphome_configs/tasks/main.yaml
+- name: Set ESPHome paths
+  set_fact:
+    esphome_templates_dir: "{{ role_path }}/templates"
+    esphome_output_dir: "{{ playbook_dir }}/../sensors/esphome"
+
+- name: Determine ESPHome config name
+  set_fact:
+    esphome_config_name: "{{ config_name }}"
+
+- name: Validate ESPHome config name
+  assert:
+    that:
+      - esphome_config_name is defined
+      - esphome_config_name | length > 0
+    fail_msg: "Each sensor host must define `config_name` in inventory."
+
+- name: Build ESPHome template paths
+  set_fact:
+    esphome_template_file: "{{ esphome_config_name }}.yaml.j2"
+    esphome_template_path: "{{ esphome_templates_dir }}/{{ esphome_config_name }}.yaml.j2"
+    esphome_output_path: "{{ esphome_output_dir }}/{{ inventory_hostname }}.yaml"
+
+- name: Check that the ESPHome template exists
+  stat:
+    path: "{{ esphome_template_path }}"
+  register: esphome_template_stat
+
+- name: Fail if the ESPHome template is missing
+  assert:
+    that:
+      - esphome_template_stat.stat.exists
+      - esphome_template_stat.stat.isreg
+    fail_msg: "ESPHome template `{{ esphome_template_file }}` does not exist in `{{ esphome_templates_dir }}`."
+
+- name: Ensure the ESPHome output directory exists
+  file:
+    path: "{{ esphome_output_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Render ESPHome configuration for sensor
+  template:
+    src: "{{ esphome_template_file }}"
+    dest: "{{ esphome_output_path }}"
+    mode: '0644'
+  no_log: true

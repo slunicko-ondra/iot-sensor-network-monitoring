@@ -1,5 +1,9 @@
 # Wi-Fi and MQTT credentials are stored in `vault.yaml` and used to generate the ESPHome secrets file.
 
+# Gateway and subnet for the sensor network.
+default_gateway: <IP_ADDRESS> # for example 10.0.10.1
+default_subnet: <IP_ADDRESS>  # for example 255.255.255.0
+
 # Connection type for Ansible.
 # Since sensors are typically built and configured locally, we use the local connection type.
 # This means that Ansible will execute tasks directly on the local machine where the playbook is run,
