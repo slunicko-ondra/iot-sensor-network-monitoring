@@ -30,7 +30,7 @@
     esphome_config_files: >-
       {{
         query('fileglob', esphome_dir ~ '/*.yaml')
-        | reject('search', '/secrets(\\.example)?\\.yaml$')
+        | reject('search', '/secrets.*\\.yaml$')
         | list
         | sort
       }}
@@ -68,7 +68,8 @@
         (
           esphome_config_files
           | map('basename')
-          | map('regex_replace', '\\.yaml$', '')
+          | map('splitext')
+          | map('first')
           | map('regex_replace', '_', '-')
           | map('regex_replace', '$', '-key')
           | list
