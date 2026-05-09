@@ -1,0 +1,16 @@
+---
+# roles/esphome_firmware/tasks/main.yaml
+- name: Set up virtual environment
+  pip:
+    name:
+      - aioesphomeapi
+      - esphome
+    virtualenv: "{{ playbook_dir }}/venv"
+    virtualenv_command: "{{ ansible_playbook_python }} -m venv"
+
+- name: Set Python interpreter to virtual environment
+  set_fact:
+    ansible_python_interpreter: "{{ playbook_dir }}/venv/bin/python"
+
+- name: Compile ESPHome firmware
+  command: "esphome compile {{ esphome_output_dir }}/{{ inventory_hostname }}.yaml"

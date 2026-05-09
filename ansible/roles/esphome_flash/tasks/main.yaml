@@ -1,0 +1,20 @@
+---
+# roles/esphome_flash/tasks/main.yaml
+- name: Wait for human to plug in the device
+  pause:
+    prompt: |
+      Plug sensor '{{ inventory_hostname }}' into USB.
+      Press ENTER to use default port ({{ esphome_usb_port | default('/dev/ttyUSB0') }}),
+      or type a custom port (e.g., /dev/ttyACM0) and press ENTER:
+  register: prompt_result
+
+- name: Determine the active USB port
+  set_fact:
+    active_usb_port: "{{ prompt_result.user_input | default(esphome_usb_port | default('/dev/ttyUSB0'), true) }}"
+
+- name: Upload firmware via USB
+  command: "{{ playbook_dir }}/venv/bin/esphome upload {{ esphome_output_dir }}/{{ inventory_hostname }}.yaml --device {{ active_usb_port }}"
+
+- name: Success message
+  debug:
+    msg: "Done! You can unplug sensor '{{ inventory_hostname }}'."

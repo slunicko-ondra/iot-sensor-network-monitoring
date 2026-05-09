@@ -1,5 +1,5 @@
 ---
-- name: Install ESPHome firmware to sensors
+- name: Prepare ESPHome firmware
   hosts: sensors
   become: no
   vars_files:
@@ -9,6 +9,17 @@
       tags: configs
     - role: prepare_esphome_secrets
       tags: secrets
+    - role: esphome_firmware
+      tags: firmware
+
+- name: Flash ESPHome devices via USB
+  hosts: sensors
+  become: no
+  serial: 1
+  roles:
+    - role: esphome_flash
+      tags: flash
+
 #  tasks:
 #    - name: Set up virtual environment
 #      pip:
