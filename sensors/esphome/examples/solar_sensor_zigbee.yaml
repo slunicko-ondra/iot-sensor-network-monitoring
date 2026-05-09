@@ -1,4 +1,6 @@
 substitutions:
+  device_name: solar-sensor
+
   # TESTING
   sleep_duration: "0s"
   update_interval: "10s"
@@ -14,10 +16,9 @@ substitutions:
   # enable_sleep: "true"
 
 esphome:
-  name: solar-sensor
+  name: ${device_name}
 
 esp32:
-  board: esp32-c6-devkitc-1
   variant: esp32c6
   partitions: partitions_zb.csv
   framework:
