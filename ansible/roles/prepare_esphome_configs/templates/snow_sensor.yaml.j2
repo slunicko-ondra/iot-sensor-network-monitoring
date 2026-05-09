@@ -1,0 +1,112 @@
+substitutions:
+  device_name: {{ inventory_hostname }}
+  wifi_fallback_name: "{{ inventory_hostname }} Hotspot"
+  wifi_fallback_password: {{ vault_hotspot_password }}
+  static_ip: {{ ansible_host }}
+  gateway_ip: {{ default_gateway }}
+  subnet: {{ default_subnet }}
+  mqtt_broker: {{ vault_mqtt_broker }}
+  mqtt_topic_prefix: {{ inventory_hostname }}
+  ultrasonic_trigger_pin: GPIO15
+  ultrasonic_echo_pin: GPIO2
+  i2c_sda_pin: GPIO21
+  i2c_scl_pin: GPIO22
+
+esphome:
+  name: ${device_name}
+
+{% if esp_platform == 'esp8266' %}
+esp8266:
+  board: {{ esp_board | default('esp01_1m') }}
+{% elif esp_platform == 'esp32' %}
+esp32:
+  variant: {{ esp_variant | default('esp32') }}
+{% else %}
+# ERROR: Platform '{{ esp_platform }}' is not supported!
+{% endif %}
+
+logger:
+
+api:
+  encryption:
+    key: !secret {{ inventory_hostname | replace('_', '-') }}-key
+  reboot_timeout: 0s
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  manual_ip:
+    static_ip: ${static_ip}
+    gateway: ${gateway_ip}
+    subnet: ${subnet}
+
+  ap:
+    ssid: ${wifi_fallback_name}
+    password: ${wifi_fallback_password}
+
+captive_portal:
+
+mqtt:
+  broker: ${mqtt_broker}
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  discovery: true
+  topic_prefix: ${mqtt_topic_prefix}
+  birth_message:
+    topic: ${mqtt_topic_prefix}/status
+    payload: "online"
+    retain: true
+  on_connect:
+    - subscribe:
+        topic: ${mqtt_topic_prefix}/calibrateSnow
+        qos: 1
+        then:
+          - lambda: |-
+              float ref_dist = atof(x.c_str());
+              if (ref_dist > 0) {
+                id(ref_distance_cm) = ref_dist;
+                id(distance_sensor).publish_state(ref_dist);
+              }
+
+i2c:
+  sda: ${i2c_sda_pin}
+  scl: ${i2c_scl_pin}
+  frequency: 100kHz
+
+sensor:
+  - platform: ultrasonic
+    trigger_pin: ${ultrasonic_trigger_pin}
+    echo_pin: ${ultrasonic_echo_pin}
+    name: "Distance"
+    unit_of_measurement: cm
+    update_interval: 1s
+    id: distance_sensor
+
+  - platform: bmp280_i2c
+    temperature:
+      name: "Temperature"
+      id: bme_temp
+    pressure:
+      name: "Pressure"
+    update_interval: 10s
+
+  - platform: template
+    name: "Snow Height"
+    id: snow_height
+    unit_of_measurement: cm
+    accuracy_decimals: 1
+    update_interval: 10s
+    lambda: |-
+      if (id(distance_sensor).has_state()) {
+        return id(distance_sensor).state;
+      }
+      return NAN;
+
+globals:
+  - id: ref_distance_cm
+    type: float
+    restore_value: yes

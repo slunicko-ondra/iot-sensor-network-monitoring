@@ -1,0 +1,97 @@
+substitutions:
+  device_name: {{ inventory_hostname }}
+  sleep_duration: "0s"
+  update_interval: "10s"
+  log_level: "DEBUG"
+  uart_speed: "115200"
+  enable_sleep: "false"
+  adc_pin: GPIO3
+  button_pin: GPIO9
+
+  # PRODUCTION
+  # sleep_duration: "10min"
+  # update_interval: "never"
+  # log_level: "NONE"
+  # uart_speed: "0"
+  # enable_sleep: "true"
+
+esphome:
+  name: ${device_name}
+
+{% if esp_platform == 'esp8266' %}
+# ERROR: Platform '{{ esp_platform }}' is not supported with Zigbee!
+{% elif esp_platform == 'esp32' %}
+esp32:
+  variant: {{ esp_variant | default('esp32c6') }}
+  partitions: partitions_zb.csv
+{% else %}
+# ERROR: Platform '{{ esp_platform }}' is not supported!
+{% endif %}
+
+logger:
+  level: ${log_level}
+  baud_rate: ${uart_speed}
+
+external_components:
+  - source: github://luar123/zigbee_esphome
+    components: [zigbee]
+
+zigbee:
+  id: zigbee_solar
+  components: all
+  on_join:
+    then:
+      - logger.log: "Zigbee connected"
+
+deep_sleep:
+  id: deep_sleep_1
+  run_duration: 20s
+  sleep_duration: ${sleep_duration}
+
+sensor:
+  - platform: adc
+    pin: ${adc_pin}
+    id: solar_volt
+    name: "Solar Voltage"
+    unit_of_measurement: "V"
+    device_class: "voltage"
+    state_class: "measurement"
+    accuracy_decimals: 2
+    update_interval: ${update_interval}
+    attenuation: 12dB
+    filters:
+      - multiply: 5.0
+      - lambda: "return x < 0.25 ? 0.0 : x;"
+      - sliding_window_moving_average:
+          window_size: 5
+          send_every: 1
+    on_value:
+      then:
+        - zigbee.report: zigbee_solar
+        - lambda: |-
+            if (${enable_sleep}) {
+              id(deep_sleep_1).begin_sleep();
+            }
+
+# Reset Zigbee state
+button:
+  - platform: factory_reset
+    id: reset_nvs_data
+    name: "Delete NVS to enable Zigbee pairing"
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: ${button_pin}
+      mode: INPUT_PULLUP
+      inverted: true
+    id: boot_button
+    name: "Boot Button"
+    # reset after 5 seconds of being pressed
+    on_press:
+      - delay: 5s
+      - if:
+          condition:
+            binary_sensor.is_on: boot_button
+          then:
+            - button.press: reset_nvs_data

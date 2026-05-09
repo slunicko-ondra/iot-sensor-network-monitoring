@@ -1,0 +1,79 @@
+substitutions:
+  device_name: {{ inventory_hostname }}
+  wifi_fallback_name: "{{ inventory_hostname }} Hotspot"
+  wifi_fallback_password: {{ vault_hotspot_password }}
+  static_ip: {{ ansible_host }}
+  gateway_ip: {{ default_gateway }}
+  subnet: {{ default_subnet }}
+  mqtt_broker: {{ vault_mqtt_broker }}
+  mqtt_topic_prefix: {{ inventory_hostname }}
+  dht_pin: GPIO0
+
+esphome:
+  name: ${device_name}
+
+{% if esp_platform == 'esp8266' %}
+esp8266:
+  board: {{ esp_board | default('esp01_1m') }}
+{% elif esp_platform == 'esp32' %}
+esp32:
+  variant: {{ esp_variant | default('esp32') }}
+{% else %}
+# ERROR: Platform '{{ esp_platform }}' is not supported!
+{% endif %}
+
+logger:
+
+api:
+  encryption:
+    key: !secret {{ inventory_hostname | replace('_', '-') }}-key
+  reboot_timeout: 0s
+
+ota:
+  - platform: esphome
+
+web_server:
+  port: 80
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  manual_ip:
+    static_ip: ${static_ip}
+    gateway: ${gateway_ip}
+    subnet: ${subnet}
+  ap:
+    ssid: ${wifi_fallback_name}
+    password: ${wifi_fallback_password}
+
+captive_portal:
+
+mqtt:
+  broker: ${mqtt_broker}
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  discovery: true
+  log_topic:
+    topic: "${mqtt_topic_prefix}/debug"
+    level: WARN
+
+sensor:
+  - platform: dht
+    pin: ${dht_pin}
+    temperature:
+      id: "temp_sensor"
+      name: "Temperature"
+    humidity:
+      id: "humidity_sensor"
+      name: "Humidity"
+    update_interval: 10s
+
+interval:
+  - interval: 10s
+    then:
+      - mqtt.publish_json:
+          topic: ${mqtt_topic_prefix}/data
+          payload: |-
+            root["temperature"] = id(temp_sensor).state;
+            root["humidity"] = id(humidity_sensor).state;
