@@ -11,6 +11,13 @@
     mode: '0755'
   run_once: true
 
+- name: Copy all supplementary files to ESPHome output directory
+  copy:
+    src: "{{ role_path }}/files/"
+    dest: "{{ esphome_output_dir }}/"
+    mode: '0644'
+  run_once: true
+
 - name: Determine ESPHome config name
   set_fact:
     esphome_config_name: "{{ config_name }}"
