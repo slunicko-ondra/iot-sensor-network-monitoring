@@ -128,6 +128,57 @@ sensor:
       }
       return NAN;
 
+number:
+  - platform: template
+    name: "Manual Snow Calibration"
+    id: manual_cal_val
+    icon: "mdi:ruler"
+    unit_of_measurement: cm
+    optimistic: true
+    min_value: 0
+    max_value: 400
+    step: 0.1
+    mode: box
+    on_value:
+      then:
+        - lambda: |-
+            if (isnan(id(distance_sensor).state)) {
+              ESP_LOGW("snow_sensor", "Calibration skipped because current distance is invalid");
+              return;
+            }
+            const float new_reference_distance_cm = id(distance_sensor).state + x;
+            id(snow_reference_distance_cm) = new_reference_distance_cm;
+            ESP_LOGI("snow_sensor", "Calibration updated: snow_depth=%.2f cm", x);
+
+        - mqtt.publish:
+            topic: ${mqtt_topic_prefix}/calibrationStatus
+            payload: !lambda |-
+              char buffer[96];
+              snprintf(buffer, sizeof(buffer), "Calibrated to: %.2f cm", x);
+              return std::string(buffer);
+
+button:
+  - platform: template
+    name: "Reset Snow to Zero"
+    id: reset_snow_zero
+    icon: "mdi:snowflake-melt"
+    on_press:
+      then:
+        - lambda: |-
+            if (isnan(id(distance_sensor).state)) {
+              ESP_LOGW("snow_sensor", "Zeroing skipped because current distance is invalid");
+              return;
+            }
+            id(snow_reference_distance_cm) = id(distance_sensor).state;
+            ESP_LOGI("snow_sensor", "Snow height reset to 0.0 cm");
+
+        - mqtt.publish:
+            topic: ${mqtt_topic_prefix}/calibrationStatus
+            payload: !lambda |-
+              char buffer[96];
+              snprintf(buffer, sizeof(buffer), "Reset to ZERO. Ref: %.2f cm", id(snow_reference_distance_cm));
+              return std::string(buffer);
+
 globals:
   - id: snow_reference_distance_cm
     type: float

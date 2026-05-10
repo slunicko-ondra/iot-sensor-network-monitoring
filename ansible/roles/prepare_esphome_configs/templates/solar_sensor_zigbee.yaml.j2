@@ -1,6 +1,6 @@
 substitutions:
   device_name: {{ inventory_hostname }}
-  sleep_duration: "10min"
+  sleep_duration: "5min"
   update_interval: "10s"
   log_level: "DEBUG"
   uart_speed: "115200"
@@ -11,7 +11,7 @@ globals:
   - id: allow_sleep
     type: bool
     restore_value: false
-    initial_value: 'false'
+    initial_value: "false"
 
 esphome:
   name: ${device_name}
@@ -29,8 +29,11 @@ esphome:
           }
       - if:
           condition:
-            lambda: 'return !id(allow_sleep);'
+            lambda: 'return id(allow_sleep);'
           then:
+            - delay: 20s
+            - deep_sleep.enter: deep_sleep_1
+          else:
             - delay: 5min
             - deep_sleep.enter: deep_sleep_1
 
@@ -79,17 +82,9 @@ sensor:
     filters:
       - multiply: 5.0
       - lambda: "return x < 0.25 ? 0.0 : x;"
-      - sliding_window_moving_average:
-          window_size: 5
-          send_every: 1
     on_value:
       then:
         - zigbee.report: zigbee_solar
-        - if:
-            condition:
-              lambda: 'return id(allow_sleep);'
-            then:
-              - deep_sleep.enter: deep_sleep_1
 
 button:
   - platform: factory_reset
