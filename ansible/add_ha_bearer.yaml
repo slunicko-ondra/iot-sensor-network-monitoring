@@ -2,10 +2,16 @@
 - name: Update Prometheus with Home Assistant Bearer Token
   hosts: servers
   become: yes
+  vars_files:
+    - vault.yaml
   tasks:
+    - name: Set fact for local IP
+      set_fact:
+        local_ip: "{{ ansible_default_ipv4.address }}"
+
     - name: Fail if token is not provided
       fail:
-        msg: "Please provide the token using: -e 'ha_bearer_token=YOUR_TOKEN'"
+        msg: "Please provide the token using: -e 'ha_bearer_token=YOUR_TOKEN' or set it in vault.yaml"
       when: ha_bearer_token is not defined or ha_bearer_token == 'CHANGE_ME'
 
     - name: Fill Prometheus configuration template with new token
