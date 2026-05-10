@@ -5,12 +5,13 @@ substitutions:
   static_ip: {{ ansible_host }}
   gateway_ip: {{ default_gateway }}
   subnet: {{ default_subnet }}
-  mqtt_broker: {{ vault_mqtt_broker }}
+  mqtt_broker: {{ mqtt_broker }}
   mqtt_topic_prefix: {{ inventory_hostname }}
-  ultrasonic_trigger_pin: GPIO15
-  ultrasonic_echo_pin: GPIO2
+  ultrasonic_trigger_pin: GPIO32
+  ultrasonic_echo_pin: GPIO33
   i2c_sda_pin: GPIO21
   i2c_scl_pin: GPIO22
+  reference_distance_cm: "100.0"  # Quotes to prevent ESPHome parsing error
 
 esphome:
   name: ${device_name}
@@ -21,6 +22,8 @@ esp8266:
 {% elif esp_platform == 'esp32' %}
 esp32:
   variant: {{ esp_variant | default('esp32') }}
+  framework:
+    type: esp-idf
 {% else %}
 # ERROR: Platform '{{ esp_platform }}' is not supported!
 {% endif %}
@@ -60,17 +63,32 @@ mqtt:
     topic: ${mqtt_topic_prefix}/status
     payload: "online"
     retain: true
-  on_connect:
-    - subscribe:
-        topic: ${mqtt_topic_prefix}/calibrateSnow
-        qos: 1
-        then:
-          - lambda: |-
-              float ref_dist = atof(x.c_str());
-              if (ref_dist > 0) {
-                id(ref_distance_cm) = ref_dist;
-                id(distance_sensor).publish_state(ref_dist);
-              }
+  on_message:
+    - topic: ${mqtt_topic_prefix}/calibrateSnow
+      qos: 1
+      then:
+        - lambda: |-
+            char *end = nullptr;
+            const float snow_depth_cm = strtof(x.c_str(), &end);
+            if (end == x.c_str()) {
+              ESP_LOGW("snow_sensor", "Invalid calibration payload: %s", x.c_str());
+              return;
+            }
+
+            if (isnan(id(distance_sensor).state)) {
+              ESP_LOGW("snow_sensor", "Calibration skipped because current distance is invalid");
+              return;
+            }
+
+            const float new_reference_distance_cm = id(distance_sensor).state + snow_depth_cm;
+            id(snow_reference_distance_cm) = new_reference_distance_cm;
+            ESP_LOGI("snow_sensor", "Calibration updated: snow_depth=%.2f cm, reference=%.2f cm", snow_depth_cm, new_reference_distance_cm);
+        - mqtt.publish:
+            topic: ${mqtt_topic_prefix}/calibrationStatus
+            payload: !lambda |-
+              char buffer[96];
+              snprintf(buffer, sizeof(buffer), "Calibration OK: %.2f cm", id(snow_reference_distance_cm));
+              return std::string(buffer);
 
 i2c:
   sda: ${i2c_sda_pin}
@@ -102,11 +120,12 @@ sensor:
     update_interval: 10s
     lambda: |-
       if (id(distance_sensor).has_state()) {
-        return id(distance_sensor).state;
+        return id(snow_reference_distance_cm) - id(distance_sensor).state;
       }
       return NAN;
 
 globals:
-  - id: ref_distance_cm
+  - id: snow_reference_distance_cm
     type: float
-    restore_value: yes
+    restore_value: true
+    initial_value: ${reference_distance_cm}

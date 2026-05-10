@@ -5,7 +5,7 @@ substitutions:
   static_ip: {{ ansible_host }}
   gateway_ip: {{ default_gateway }}
   subnet: {{ default_subnet }}
-  mqtt_broker: {{ vault_mqtt_broker }}
+  mqtt_broker: {{ mqtt_broker }}
   mqtt_topic_prefix: {{ inventory_hostname }}
   adc_pin: GPIO3
 
@@ -18,6 +18,8 @@ esp8266:
 {% elif esp_platform == 'esp32' %}
 esp32:
   variant: {{ esp_variant | default('esp32') }}
+  framework:
+    type: esp-idf
 {% else %}
 # ERROR: Platform '{{ esp_platform }}' is not supported!
 {% endif %}

@@ -1,22 +1,38 @@
 substitutions:
   device_name: {{ inventory_hostname }}
-  sleep_duration: "0s"
+  sleep_duration: "10min"
   update_interval: "10s"
   log_level: "DEBUG"
   uart_speed: "115200"
-  enable_sleep: "false"
   adc_pin: GPIO3
   button_pin: GPIO9
 
-  # PRODUCTION
-  # sleep_duration: "10min"
-  # update_interval: "never"
-  # log_level: "NONE"
-  # uart_speed: "0"
-  # enable_sleep: "true"
+globals:
+  - id: allow_sleep
+    type: bool
+    restore_value: false
+    initial_value: 'false'
 
 esphome:
   name: ${device_name}
+  on_boot:
+    priority: 100
+    then:
+      - lambda: |-
+          esp_sleep_source_t wakeup_reason = esp_sleep_get_wakeup_cause();
+          if (wakeup_reason == ESP_SLEEP_WAKEUP_TIMER) {
+            ESP_LOGI("main", "Woken up by timer. Normal operation.");
+            id(allow_sleep) = true;
+          } else {
+            ESP_LOGI("main", "Woken up by reset or power. Entering 5-minute pairing/OTA mode.");
+            id(allow_sleep) = false;
+          }
+      - if:
+          condition:
+            lambda: 'return !id(allow_sleep);'
+          then:
+            - delay: 5min
+            - deep_sleep.enter: deep_sleep_1
 
 {% if esp_platform == 'esp8266' %}
 # ERROR: Platform '{{ esp_platform }}' is not supported with Zigbee!
@@ -24,6 +40,8 @@ esphome:
 esp32:
   variant: {{ esp_variant | default('esp32c6') }}
   partitions: partitions_zb.csv
+  framework:
+    type: esp-idf
 {% else %}
 # ERROR: Platform '{{ esp_platform }}' is not supported!
 {% endif %}
@@ -45,7 +63,6 @@ zigbee:
 
 deep_sleep:
   id: deep_sleep_1
-  run_duration: 20s
   sleep_duration: ${sleep_duration}
 
 sensor:
@@ -68,12 +85,12 @@ sensor:
     on_value:
       then:
         - zigbee.report: zigbee_solar
-        - lambda: |-
-            if (${enable_sleep}) {
-              id(deep_sleep_1).begin_sleep();
-            }
+        - if:
+            condition:
+              lambda: 'return id(allow_sleep);'
+            then:
+              - deep_sleep.enter: deep_sleep_1
 
-# Reset Zigbee state
 button:
   - platform: factory_reset
     id: reset_nvs_data
@@ -87,11 +104,10 @@ binary_sensor:
       inverted: true
     id: boot_button
     name: "Boot Button"
-    # reset after 5 seconds of being pressed
-    on_press:
-      - delay: 5s
-      - if:
-          condition:
-            binary_sensor.is_on: boot_button
-          then:
-            - button.press: reset_nvs_data
+    on_click:
+      min_length: 5s
+      max_length: 20s
+      then:
+        - logger.log: "Resetting Zigbee data and NVS..."
+        - zigbee.reset: zigbee_solar
+        - button.press: reset_nvs_data

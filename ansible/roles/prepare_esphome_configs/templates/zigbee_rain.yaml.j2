@@ -12,6 +12,8 @@ esphome:
 esp32:
   variant: {{ esp_variant | default('esp32c6') }}
   partitions: partitions_zb.csv
+  framework:
+    type: esp-idf
 {% else %}
 # ERROR: Platform '{{ esp_platform }}' is not supported!
 {% endif %}
