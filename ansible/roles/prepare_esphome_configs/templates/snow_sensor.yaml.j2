@@ -101,10 +101,13 @@ sensor:
     echo_pin: ${ultrasonic_echo_pin}
     name: "Distance"
     unit_of_measurement: cm
-    update_interval: 1s
+    update_interval: 10s
     id: distance_sensor
+    filters:
+      - multiply: 100.0
 
   - platform: bmp280_i2c
+    address: 0x76
     temperature:
       name: "Temperature"
       id: bme_temp
@@ -120,7 +123,8 @@ sensor:
     update_interval: 10s
     lambda: |-
       if (id(distance_sensor).has_state()) {
-        return id(snow_reference_distance_cm) - id(distance_sensor).state;
+        float raw_snow = id(snow_reference_distance_cm) - id(distance_sensor).state;
+        return raw_snow < 0.0 ? 0.0 : raw_snow;
       }
       return NAN;
 
