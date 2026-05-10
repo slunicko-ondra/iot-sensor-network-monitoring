@@ -1,12 +1,13 @@
 substitutions:
-  device_name: multi-temperature-sensor
-  wifi_fallback_name: "multi-temperature-sensor Hotspot"
-  wifi_fallback_password: "kProm2iSDJDm"
-  static_ip: 10.0.10.21
+  device_name: temperature-sensor
+  wifi_fallback_name: "temperature-sensor Hotspot"
+  wifi_fallback_password: oqavbr51968
+  static_ip: 10.0.10.22
   gateway_ip: 10.0.10.1
   subnet: 255.255.255.0
   mqtt_broker: 10.0.10.12
-  mqtt_topic_prefix: multi-temperature-sensor
+  mqtt_topic_prefix: temperature-sensor
+  one_wire_pin: GPIO0
 
 esphome:
   name: ${device_name}
@@ -28,6 +29,7 @@ wifi:
     static_ip: ${static_ip}
     gateway: ${gateway_ip}
     subnet: ${subnet}
+
   ap:
     ssid: ${wifi_fallback_name}
     password: ${wifi_fallback_password}
@@ -47,9 +49,11 @@ mqtt:
     payload: "online"
     retain: true
 
+captive_portal:
+
 one_wire:
   - platform: gpio
-    pin: GPIO0
+    pin: ${one_wire_pin}
 
 sensor:
   - platform: dallas_temp

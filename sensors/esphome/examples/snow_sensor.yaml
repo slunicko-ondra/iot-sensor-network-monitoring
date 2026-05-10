@@ -1,23 +1,26 @@
 substitutions:
   device_name: snow-sensor
   wifi_fallback_name: "snow-sensor Hotspot"
-  wifi_fallback_password: "kProm2iSDJDm"
-  static_ip: 10.0.10.24
+  wifi_fallback_password: oqavbr51968
+  static_ip: 10.0.10.20
   gateway_ip: 10.0.10.1
   subnet: 255.255.255.0
   mqtt_broker: 10.0.10.12
   mqtt_topic_prefix: snow-sensor
-  # Distance from the sensor to the ground when there is no snow.
-  # Adjust this after installation or via MQTT calibration.
-  reference_distance_cm: "150.0"
+  ultrasonic_trigger_pin: GPIO32
+  ultrasonic_echo_pin: GPIO33
+  i2c_sda_pin: GPIO21
+  i2c_scl_pin: GPIO22
+  reference_distance_cm: "100.0"  # Quotes to prevent ESPHome parsing error
 
 esphome:
   name: ${device_name}
 
 esp32:
   variant: esp32
+  framework:
+    type: esp-idf
 
-# Enable logging
 logger:
 
 api:
@@ -35,6 +38,7 @@ wifi:
     static_ip: ${static_ip}
     gateway: ${gateway_ip}
     subnet: ${subnet}
+
   ap:
     ssid: ${wifi_fallback_name}
     password: ${wifi_fallback_password}
@@ -52,12 +56,9 @@ mqtt:
     topic: ${mqtt_topic_prefix}/status
     payload: "online"
     retain: true
-  will_message:
-    topic: ${mqtt_topic_prefix}/status
-    payload: "offline"
-    retain: true
   on_message:
-    - topic: calibrateSnow
+    - topic: ${mqtt_topic_prefix}/calibrateSnow
+      qos: 1
       then:
         - lambda: |-
             char *end = nullptr;
@@ -67,84 +68,57 @@ mqtt:
               return;
             }
 
-            if (isnan(id(snow_distance).state)) {
+            if (isnan(id(distance_sensor).state)) {
               ESP_LOGW("snow_sensor", "Calibration skipped because current distance is invalid");
               return;
             }
 
-            const float new_reference_distance_cm = id(snow_distance).state + snow_depth_cm;
+            const float new_reference_distance_cm = id(distance_sensor).state + snow_depth_cm;
             id(snow_reference_distance_cm) = new_reference_distance_cm;
             ESP_LOGI("snow_sensor", "Calibration updated: snow_depth=%.2f cm, reference=%.2f cm", snow_depth_cm, new_reference_distance_cm);
         - mqtt.publish:
-            topic: calibrationStatus
+            topic: ${mqtt_topic_prefix}/calibrationStatus
             payload: !lambda |-
               char buffer[96];
               snprintf(buffer, sizeof(buffer), "Calibration OK: %.2f cm", id(snow_reference_distance_cm));
               return std::string(buffer);
+
+i2c:
+  sda: ${i2c_sda_pin}
+  scl: ${i2c_scl_pin}
+  frequency: 100kHz
+
+sensor:
+  - platform: ultrasonic
+    trigger_pin: ${ultrasonic_trigger_pin}
+    echo_pin: ${ultrasonic_echo_pin}
+    name: "Distance"
+    unit_of_measurement: cm
+    update_interval: 1s
+    id: distance_sensor
+
+  - platform: bmp280_i2c
+    temperature:
+      name: "Temperature"
+      id: bme_temp
+    pressure:
+      name: "Pressure"
+    update_interval: 10s
+
+  - platform: template
+    name: "Snow Height"
+    id: snow_height
+    unit_of_measurement: cm
+    accuracy_decimals: 1
+    update_interval: 10s
+    lambda: |-
+      if (id(distance_sensor).has_state()) {
+        return id(snow_reference_distance_cm) - id(distance_sensor).state;
+      }
+      return NAN;
 
 globals:
   - id: snow_reference_distance_cm
     type: float
     restore_value: true
     initial_value: ${reference_distance_cm}
-
-i2c:
-  sda: GPIO21
-  scl: GPIO22
-  scan: true
-
-sensor:
-  - platform: ultrasonic
-    trigger_pin: GPIO5
-    echo_pin: GPIO18
-    name: "Snow Distance"
-    id: snow_distance
-    unit_of_measurement: "cm"
-    accuracy_decimals: 1
-    update_interval: 10s
-    pulse_time: 10us
-    timeout: 4m
-    filters:
-      - multiply: 100.0
-      - median:
-          window_size: 5
-          send_every: 1
-
-  - platform: template
-    name: "Snow Height"
-    id: snow_height
-    unit_of_measurement: "cm"
-    device_class: distance
-    state_class: measurement
-    accuracy_decimals: 1
-    update_interval: 10s
-    lambda: |-
-      if (isnan(id(snow_distance).state)) {
-        return NAN;
-      }
-      float snow_height_cm = id(snow_reference_distance_cm) - id(snow_distance).state;
-      if (snow_height_cm < 0.0f) {
-        snow_height_cm = 0.0f;
-      }
-      return snow_height_cm;
-
-  - platform: bme280_i2c
-    temperature:
-      name: "Snow Sensor Temperature"
-      id: snow_temperature
-      oversampling: 16x
-    pressure:
-      name: "Snow Sensor Pressure"
-      id: snow_pressure
-    address: 0x76
-    update_interval: 60s
-
-interval:
-  - interval: 10s
-    then:
-      - mqtt.publish_json:
-          topic: weather
-          payload: |-
-            root["snow_depth_cm"] = id(snow_height).state;
-            root["temperature_c"] = id(snow_temperature).state;
-            root["pressure_hpa"] = id(snow_pressure).state;
