@@ -17,7 +17,7 @@
     mode: '0755'
 
 - name: Copy docker folder to server
-  synchronize:
+  copy:
     src: "{{ role_path }}/files/docker/"
     dest: "{{ iot_base_dir }}/"
 
