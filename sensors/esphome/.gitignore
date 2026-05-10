@@ -5,3 +5,4 @@
 /secrets*.yaml
 !/examples/secrets.example.yaml
 /venv/
+/ansible_output

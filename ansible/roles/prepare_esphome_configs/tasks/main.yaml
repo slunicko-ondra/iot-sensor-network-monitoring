@@ -58,4 +58,3 @@
     src: "{{ esphome_template_file }}"
     dest: "{{ esphome_output_path }}"
     mode: '0644'
-  no_log: true

@@ -3,14 +3,12 @@
 - name: Set up virtual environment
   pip:
     name:
-      - aioesphomeapi
       - esphome
+    state: latest
     virtualenv: "{{ playbook_dir }}/venv"
     virtualenv_command: "{{ ansible_playbook_python }} -m venv"
-
-- name: Set Python interpreter to virtual environment
-  set_fact:
-    ansible_python_interpreter: "{{ playbook_dir }}/venv/bin/python"
+  run_once: true
 
 - name: Compile ESPHome firmware
-  command: "esphome compile {{ esphome_output_dir }}/{{ inventory_hostname }}.yaml"
+  command: "{{ playbook_dir }}/venv/bin/esphome compile {{ esphome_output_dir }}/{{ inventory_hostname }}.yaml"
+  throttle: 1
