@@ -1,8 +1,7 @@
 inventory*
 !inventory.example.*
 vault.yaml
-ansible.cfg
-
+.vault_password
 group_vars/*.yaml
 host_vars/*.yaml
 !group_vars/*.example.yaml

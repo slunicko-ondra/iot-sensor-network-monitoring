@@ -1,5 +1,16 @@
+substitutions:
+  device_name: temperature-sensor
+  wifi_fallback_name: "temperature-sensor Hotspot"
+  wifi_fallback_password: oqavbr51968
+  static_ip: 10.0.10.22
+  gateway_ip: 10.0.10.1
+  subnet: 255.255.255.0
+  mqtt_broker: 10.0.10.12
+  mqtt_topic_prefix: temperature-sensor
+  one_wire_pin: GPIO0
+
 esphome:
-  name: multi-temperature-sensor
+  name: ${device_name}
 
 esp8266:
   board: esp01_1m
@@ -8,38 +19,41 @@ logger:
 
 api:
   encryption:
-    key: "FUFbL5XSBe7zYaGlqitilzIKNElXxRiIltbjnQKcXMQ="
+    key: !secret one-wire-multi-temp-key
   reboot_timeout: 0s
 
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
   manual_ip:
-    static_ip: 10.0.0.42
-    gateway: 10.0.0.138
-    subnet: 255.255.255.0
+    static_ip: ${static_ip}
+    gateway: ${gateway_ip}
+    subnet: ${subnet}
+
   ap:
-    ssid: "multi temp hotspot"
-    password: "kProm2iSDJDm"
+    ssid: ${wifi_fallback_name}
+    password: ${wifi_fallback_password}
 
 ota:
   - platform: esphome
 
 mqtt:
-  broker: 10.0.0.131
+  broker: ${mqtt_broker}
   port: 1883
   username: !secret mqtt_username
   password: !secret mqtt_password
   discovery: true
-  topic_prefix: solar-sensor
+  topic_prefix: ${mqtt_topic_prefix}
   birth_message:
-    topic: solar-sensor/status
+    topic: ${mqtt_topic_prefix}/status
     payload: "online"
     retain: true
 
+captive_portal:
+
 one_wire:
   - platform: gpio
-    pin: GPIO0
+    pin: ${one_wire_pin}
 
 sensor:
   - platform: dallas_temp

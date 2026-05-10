@@ -1,0 +1,63 @@
+substitutions:
+  device_name: {{ inventory_hostname }}
+  rain_sensor_pin: GPIO3
+  button_pin: GPIO9
+
+esphome:
+  name: ${device_name}
+
+{% if esp_platform == 'esp8266' %}
+# ERROR: Platform '{{ esp_platform }}' is not supported with Zigbee!
+{% elif esp_platform == 'esp32' %}
+esp32:
+  variant: {{ esp_variant | default('esp32c6') }}
+  partitions: partitions_zb.csv
+  framework:
+    type: esp-idf
+{% else %}
+# ERROR: Platform '{{ esp_platform }}' is not supported!
+{% endif %}
+
+logger:
+
+external_components:
+  - source: github://luar123/zigbee_esphome
+    components: [zigbee]
+
+zigbee:
+  id: zigbee_rain
+  components: all
+  on_join:
+    then:
+      - logger.log: "Joined network"
+
+# Reset Zigbee state
+button:
+  - platform: factory_reset
+    id: reset_nvs_data
+    name: "Delete NVS to enable Zigbee pairing"
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: ${rain_sensor_pin}
+      inverted: true
+    name: "Rain Sensor"
+    on_state:
+      then:
+        - zigbee.report: zigbee_rain
+  - platform: gpio
+    pin:
+      number: ${button_pin}
+      mode: INPUT_PULLUP
+      inverted: true
+    id: boot_button
+    name: "Boot Button"
+    # reset after 5 seconds of being pressed
+    on_press:
+      - delay: 5s
+      - if:
+          condition:
+            binary_sensor.is_on: boot_button
+          then:
+            - button.press: reset_nvs_data

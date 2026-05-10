@@ -1,8 +1,10 @@
+substitutions:
+  device_name: zigbee-rain
+
 esphome:
-  name: zigbee-rain
+  name: ${device_name}
 
 esp32:
-  board: esp32-c6-devkitc-1
   variant: esp32c6
   partitions: partitions_zb.csv
   framework:
@@ -13,7 +15,7 @@ logger:
 
 #api:
 #  encryption:
-#    key: !secret encryption_key
+#    key: !secret zigbee-rain-key
 #  reboot_timeout: 0s
 #
 #ota:

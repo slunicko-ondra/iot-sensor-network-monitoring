@@ -1,1 +1,6 @@
 ansible_ssh_private_key_file: "path/to/your/private/key"
+
+# Output directory for generated ESPHome configs and firmware.
+esphome_output_dir: "{{ playbook_dir }}/../sensors/esphome/ansible_output"
+
+# Wi-Fi and MQTT credentials are stored in `vault.yaml` and reused by both server and sensors.

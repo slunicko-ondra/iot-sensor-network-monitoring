@@ -1,0 +1,36 @@
+---
+# roles/esphome_flash/tasks/main.yaml
+- name: Wait for human to plug in the device
+  pause:
+    prompt: |
+      🔌 Get ready to flash the sensor '{{ inventory_hostname }}'.
+      Plug the board into a USB port, wait about 3 seconds, and then press ENTER...
+
+- name: Detect the most recently connected USB serial port
+  shell: "ls -1tr /dev/ttyUSB* /dev/ttyACM* 2>/dev/null | tail -n 1"
+  register: detected_port
+  changed_when: false
+  failed_when: false
+
+- name: Ask for confirmation or manual port entry
+  pause:
+    prompt: |
+      🔍 Detected port: {{ detected_port.stdout | default('None', true) }}
+      Press ENTER to use the detected port, or type the full path (e.g., /dev/ttyUSB0) to override:
+  register: port_prompt
+
+- name: Set final USB port
+  set_fact:
+    final_port: "{{ port_prompt.user_input | default(detected_port.stdout, true) }}"
+
+- name: Fail if no port was determined
+  fail:
+    msg: "❌ No port was detected automatically and no manual input was provided. Aborting."
+  when: final_port | trim == ""
+
+- name: Upload firmware via USB
+  command: "{{ playbook_dir }}/venv/bin/esphome upload {{ esphome_output_dir }}/{{ inventory_hostname }}.yaml --device {{ final_port }}"
+
+- name: Success message
+  debug:
+    msg: "✅ Done! You can now unplug the sensor '{{ inventory_hostname }}'."

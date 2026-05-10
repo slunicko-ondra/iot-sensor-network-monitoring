@@ -1,0 +1,128 @@
+---
+# roles/prepare_sensors/tasks/main.yaml
+- name: Prepare all ESPHome secrets
+  run_once: true
+  block:
+    - name: Set ESPHome paths
+      set_fact:
+        esphome_secrets_path: "{{ esphome_output_dir }}/secrets.yaml"
+
+    - name: Ensure ESPHome output directory exists
+      file:
+        path: "{{ esphome_output_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Validate required ESPHome secret variables
+      assert:
+        that:
+          - vault_wifi_ssid is defined
+          - vault_wifi_password is defined
+          - vault_mqtt_username is defined
+          - vault_mqtt_password is defined
+        fail_msg: "ESPHome Wi-Fi and MQTT credentials must be defined in `vault.yaml`."
+
+    - name: Check if openssl is installed locally
+      command: openssl version
+      register: openssl_check
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Fail if openssl is missing
+      assert:
+        that: openssl_check.rc == 0
+        fail_msg: "OpenSSL is required to generate ESPHome secret keys. Please install OpenSSL and try again."
+
+    - name: Collect ESPHome configuration files
+      set_fact:
+        esphome_config_files: >-
+          {{
+            query('fileglob', esphome_output_dir ~ '/*.yaml')
+            | reject('search', '/secrets.*\.yaml$')
+            | list
+            | sort
+          }}
+
+    - name: Check whether ESPHome secrets already exist
+      stat:
+        path: "{{ esphome_secrets_path }}"
+      register: esphome_secrets_stat
+
+    - name: Read existing ESPHome secrets
+      slurp:
+        src: "{{ esphome_secrets_path }}"
+      register: esphome_secrets_raw
+      when: esphome_secrets_stat.stat.exists
+      no_log: true
+
+    - name: Set existing ESPHome secrets
+      set_fact:
+        esphome_existing_secrets: "{{ (esphome_secrets_raw.content | b64decode | from_yaml) | default({}, true) }}"
+      when: esphome_secrets_stat.stat.exists
+      no_log: true
+
+    - name: Initialize missing ESPHome secrets data
+      set_fact:
+        esphome_existing_secrets: "{{ esphome_existing_secrets | default({}) }}"
+        esphome_generated_key_results:
+          results: []
+        esphome_generated_sensor_secrets: {}
+      no_log: true
+
+    - name: Build ESPHome secret names
+      set_fact:
+        esphome_secret_names: >-
+          {{
+            (
+              esphome_config_files
+              | map('basename')
+              | map('splitext')
+              | map('first')
+              | map('regex_replace', '_', '-')
+              | map('regex_replace', '$', '-key')
+              | list
+            )
+            | unique
+            | sort
+          }}
+
+    - name: Determine missing ESPHome secret keys
+      set_fact:
+        esphome_missing_secret_names: >-
+          {{ esphome_secret_names | difference(esphome_existing_secrets.keys() | list) | list | sort }}
+
+    - name: Build shared ESPHome secrets
+      set_fact:
+        esphome_shared_secrets:
+          wifi_ssid: "{{ vault_wifi_ssid }}"
+          wifi_password: "{{ vault_wifi_password }}"
+          mqtt_username: "{{ vault_mqtt_username }}"
+          mqtt_password: "{{ vault_mqtt_password }}"
+      no_log: true
+
+    - name: Generate missing ESPHome secret keys
+      command: openssl rand -base64 32
+      register: esphome_generated_key_results
+      loop: "{{ esphome_missing_secret_names }}"
+      when: esphome_missing_secret_names | length > 0
+      changed_when: true
+      no_log: true
+
+    - name: Store generated ESPHome secret keys
+      set_fact:
+        esphome_generated_sensor_secrets: >-
+          {{ esphome_generated_sensor_secrets | combine({ item.item: item.stdout | trim }) }}
+      loop: "{{ esphome_generated_key_results.results | default([]) }}"
+      no_log: true
+
+    - name: Merge ESPHome secrets
+      set_fact:
+        esphome_secrets: "{{ esphome_existing_secrets | combine(esphome_shared_secrets) | combine(esphome_generated_sensor_secrets) }}"
+      no_log: true
+
+    - name: Render ESPHome secrets file
+      template:
+        src: secrets.yaml.j2
+        dest: "{{ esphome_secrets_path }}"
+        mode: '0600'
+      no_log: true

@@ -1,0 +1,186 @@
+substitutions:
+  device_name: {{ inventory_hostname }}
+  wifi_fallback_name: "{{ inventory_hostname }} Hotspot"
+  wifi_fallback_password: {{ vault_hotspot_password }}
+  static_ip: {{ ansible_host }}
+  gateway_ip: {{ default_gateway }}
+  subnet: {{ default_subnet }}
+  mqtt_broker: {{ mqtt_broker }}
+  mqtt_topic_prefix: {{ inventory_hostname }}
+  ultrasonic_trigger_pin: GPIO32
+  ultrasonic_echo_pin: GPIO33
+  i2c_sda_pin: GPIO21
+  i2c_scl_pin: GPIO22
+  reference_distance_cm: "100.0"  # Quotes to prevent ESPHome parsing error
+
+esphome:
+  name: ${device_name}
+
+{% if esp_platform == 'esp8266' %}
+esp8266:
+  board: {{ esp_board | default('esp01_1m') }}
+{% elif esp_platform == 'esp32' %}
+esp32:
+  variant: {{ esp_variant | default('esp32') }}
+  framework:
+    type: esp-idf
+{% else %}
+# ERROR: Platform '{{ esp_platform }}' is not supported!
+{% endif %}
+
+logger:
+
+api:
+  encryption:
+    key: !secret {{ inventory_hostname | replace('_', '-') }}-key
+  reboot_timeout: 0s
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  manual_ip:
+    static_ip: ${static_ip}
+    gateway: ${gateway_ip}
+    subnet: ${subnet}
+
+  ap:
+    ssid: ${wifi_fallback_name}
+    password: ${wifi_fallback_password}
+
+captive_portal:
+
+mqtt:
+  broker: ${mqtt_broker}
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  discovery: true
+  topic_prefix: ${mqtt_topic_prefix}
+  birth_message:
+    topic: ${mqtt_topic_prefix}/status
+    payload: "online"
+    retain: true
+  on_message:
+    - topic: ${mqtt_topic_prefix}/calibrateSnow
+      qos: 1
+      then:
+        - lambda: |-
+            char *end = nullptr;
+            const float snow_depth_cm = strtof(x.c_str(), &end);
+            if (end == x.c_str()) {
+              ESP_LOGW("snow_sensor", "Invalid calibration payload: %s", x.c_str());
+              return;
+            }
+
+            if (isnan(id(distance_sensor).state)) {
+              ESP_LOGW("snow_sensor", "Calibration skipped because current distance is invalid");
+              return;
+            }
+
+            const float new_reference_distance_cm = id(distance_sensor).state + snow_depth_cm;
+            id(snow_reference_distance_cm) = new_reference_distance_cm;
+            ESP_LOGI("snow_sensor", "Calibration updated: snow_depth=%.2f cm, reference=%.2f cm", snow_depth_cm, new_reference_distance_cm);
+        - mqtt.publish:
+            topic: ${mqtt_topic_prefix}/calibrationStatus
+            payload: !lambda |-
+              char buffer[96];
+              snprintf(buffer, sizeof(buffer), "Calibration OK: %.2f cm", id(snow_reference_distance_cm));
+              return std::string(buffer);
+
+i2c:
+  sda: ${i2c_sda_pin}
+  scl: ${i2c_scl_pin}
+  frequency: 100kHz
+
+sensor:
+  - platform: ultrasonic
+    trigger_pin: ${ultrasonic_trigger_pin}
+    echo_pin: ${ultrasonic_echo_pin}
+    name: "Distance"
+    unit_of_measurement: cm
+    update_interval: 10s
+    id: distance_sensor
+    filters:
+      - multiply: 100.0
+
+  - platform: bmp280_i2c
+    address: 0x76
+    temperature:
+      name: "Temperature"
+      id: bme_temp
+    pressure:
+      name: "Pressure"
+    update_interval: 10s
+
+  - platform: template
+    name: "Snow Height"
+    id: snow_height
+    unit_of_measurement: cm
+    accuracy_decimals: 1
+    update_interval: 10s
+    lambda: |-
+      if (id(distance_sensor).has_state()) {
+        float raw_snow = id(snow_reference_distance_cm) - id(distance_sensor).state;
+        return raw_snow < 0.0 ? 0.0 : raw_snow;
+      }
+      return NAN;
+
+number:
+  - platform: template
+    name: "Manual Snow Calibration"
+    id: manual_cal_val
+    icon: "mdi:ruler"
+    unit_of_measurement: cm
+    optimistic: true
+    min_value: 0
+    max_value: 400
+    step: 0.1
+    mode: box
+    on_value:
+      then:
+        - lambda: |-
+            if (isnan(id(distance_sensor).state)) {
+              ESP_LOGW("snow_sensor", "Calibration skipped because current distance is invalid");
+              return;
+            }
+            const float new_reference_distance_cm = id(distance_sensor).state + x;
+            id(snow_reference_distance_cm) = new_reference_distance_cm;
+            ESP_LOGI("snow_sensor", "Calibration updated: snow_depth=%.2f cm", x);
+
+        - mqtt.publish:
+            topic: ${mqtt_topic_prefix}/calibrationStatus
+            payload: !lambda |-
+              char buffer[96];
+              snprintf(buffer, sizeof(buffer), "Calibrated to: %.2f cm", x);
+              return std::string(buffer);
+
+button:
+  - platform: template
+    name: "Reset Snow to Zero"
+    id: reset_snow_zero
+    icon: "mdi:snowflake-melt"
+    on_press:
+      then:
+        - lambda: |-
+            if (isnan(id(distance_sensor).state)) {
+              ESP_LOGW("snow_sensor", "Zeroing skipped because current distance is invalid");
+              return;
+            }
+            id(snow_reference_distance_cm) = id(distance_sensor).state;
+            ESP_LOGI("snow_sensor", "Snow height reset to 0.0 cm");
+
+        - mqtt.publish:
+            topic: ${mqtt_topic_prefix}/calibrationStatus
+            payload: !lambda |-
+              char buffer[96];
+              snprintf(buffer, sizeof(buffer), "Reset to ZERO. Ref: %.2f cm", id(snow_reference_distance_cm));
+              return std::string(buffer);
+
+globals:
+  - id: snow_reference_distance_cm
+    type: float
+    restore_value: true
+    initial_value: ${reference_distance_cm}

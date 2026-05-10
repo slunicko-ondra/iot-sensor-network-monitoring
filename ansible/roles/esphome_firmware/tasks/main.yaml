@@ -1,0 +1,14 @@
+---
+# roles/esphome_firmware/tasks/main.yaml
+- name: Set up virtual environment
+  pip:
+    name:
+      - esphome
+    state: latest
+    virtualenv: "{{ playbook_dir }}/venv"
+    virtualenv_command: "{{ ansible_playbook_python }} -m venv"
+  run_once: true
+
+- name: Compile ESPHome firmware
+  command: "{{ playbook_dir }}/venv/bin/esphome compile {{ esphome_output_dir }}/{{ inventory_hostname }}.yaml"
+  throttle: 1

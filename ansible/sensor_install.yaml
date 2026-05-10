@@ -1,28 +1,21 @@
 ---
-- name: Install ESPHome firmware to sensors
+- name: Prepare ESPHome firmware
   hosts: sensors
-  tags: test
-  gather_facts: false
-  tasks:
-    - name: Set up virtual environment
-      pip:
-        name:
-          - aioesphomeapi
-          - esphome
-        virtualenv: "{{ playbook_dir }}/venv"
-        virtualenv_command: "{{ ansible_playbook_python }} -m venv"
-    - name: Set Python interpreter to virtual environment
-      set_fact:
-        ansible_python_interpreter: "{{ playbook_dir }}/venv/bin/python"
-    - name: Get facts
-      esphome_device_facts:
-        host: "{{ inventory_hostname }}"
-        noise_psk: "{{ esphome_key }}"
-      register: device_facts
-    - name: Debug device facts
-      debug:
-        var: device_facts
-    - name: Install firmware to device
-      esphome_run:
-        host: "{{ inventory_hostname }}"
-        config_path: "{{ playbook_dir }}/../sensors/esphome/{{ config_name }}.yaml"
+  become: no
+  vars_files:
+    - vault.yaml
+  roles:
+    - role: prepare_esphome_configs
+      tags: configs
+    - role: prepare_esphome_secrets
+      tags: secrets
+    - role: esphome_firmware
+      tags: firmware
+
+- name: Flash ESPHome devices via USB
+  hosts: sensors
+  become: no
+  serial: 1
+  roles:
+    - role: esphome_flash
+      tags: flash

@@ -1,0 +1,17 @@
+all:
+  children:
+    servers:
+      hosts:
+        my-server:  # set server name
+          ansible_host: <IP_ADDRESS>  # set server IP address
+          # for other variables check `group_vars/all.exmaple.yaml` and `group_vars/servers.example.yaml`
+
+    sensors:
+      hosts:
+        my-sensor:  # set sensor name
+          ansible_host: <HOST> # set sensor host (IP address or serial port path)
+          config_name: "blank_sensor"  # set sensor config file name (without .yaml extension)
+          esp_platform: "esp32"  # set sensor platform (esp32 or esp8266)
+          esp_variant: "esp32"  # set sensor variant (for esp32)
+          esp_board: "esp01_1m"  # set sensor board (for esp8266)
+          # for other variables check `group_vars/all.exmaple.yaml` and `group_vars/sensors.example.yaml`
