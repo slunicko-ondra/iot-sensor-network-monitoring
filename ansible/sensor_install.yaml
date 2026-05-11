@@ -12,6 +12,13 @@
     - role: esphome_firmware
       tags: firmware
 
+- name: Upload ESPHome configs to server
+  hosts: servers
+  become: yes
+  roles:
+    - role: upload_esphome_configs
+      tags: upload
+
 - name: Flash ESPHome devices via USB
   hosts: sensors
   become: no

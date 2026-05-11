@@ -1,0 +1,33 @@
+---
+# roles/upload_esphome_configs/tasks/main.yaml
+- name: Ensure ESPHome directory exists
+  file:
+    path: "{{ iot_base_dir }}/esphome/config"
+    state: directory
+    mode: '0755'
+
+- name: Find all YAML files in ansible_output directory
+  find:
+    paths: "{{ esphome_output_dir }}"
+    patterns: "*.yaml"
+    recurse: no
+  delegate_to: localhost
+  run_once: true
+  register: esphome_yaml_files
+
+- name: Upload ESPHome YAML files to server
+  copy:
+    src: "{{ esphome_output_dir }}/"
+    dest: "{{ iot_base_dir }}/esphome/config/"
+  when: esphome_yaml_files.matched > 0
+
+- name: Verify uploaded files
+  find:
+    paths: "{{ iot_base_dir }}/esphome/config"
+    patterns: "*.yaml"
+  register: uploaded_files
+
+- name: Display uploaded ESPHome files
+  debug:
+    msg: "Uploaded {{ uploaded_files.matched }} YAML files to {{ iot_base_dir }}/esphome/config"
+  run_once: true
