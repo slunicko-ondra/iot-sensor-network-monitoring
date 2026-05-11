@@ -1,0 +1,111 @@
+---
+- name: Restore Docker infrastructure from backup (volumes and bind mounts)
+  hosts: servers
+  become: yes
+  vars:
+    local_backup_dir: "./backups"
+    remote_tmp_dir: "/tmp/docker_backup_temp"
+    docker_volumes:
+      - docker_prometheus-data
+      - docker_grafana-data
+      - docker_mosquitto-data
+      - docker_mosquitto-logs
+      - docker_netbird-client
+
+  tasks:
+    - name: Determine backup file to restore (use provided 'backup_file' or pick latest)
+      block:
+        - name: Use explicit backup_file if provided
+          set_fact:
+            backup_file_local: "{{ backup_file }}"
+          when: backup_file is defined and backup_file | length > 0
+
+        - name: Find latest backup on control node when no explicit file provided
+          command: bash -lc "ls -1t {{ local_backup_dir }}/docker_backup_*.tar.gz 2>/dev/null | head -n1"
+          delegate_to: localhost
+          become: no
+          register: latest_backup_cmd
+          changed_when: false
+          when: backup_file is not defined or backup_file | length == 0
+
+        - name: Fail if no backup found
+          fail:
+            msg: "No backup found in {{ local_backup_dir }} and no 'backup_file' supplied."
+          when: (backup_file is not defined or backup_file | length == 0) and (latest_backup_cmd.stdout | length == 0)
+
+        - name: Set selected local backup path
+          set_fact:
+            backup_file_local: "{{ (backup_file is defined and backup_file | length > 0) | ternary(backup_file | default(''), latest_backup_cmd.stdout | default('')) }}"
+
+      run_once: true
+
+    - name: Show chosen backup
+      debug:
+        msg: "Restoring from local backup: {{ backup_file_local }}"
+      run_once: true
+
+    - name: Prepare clean temporary directory on remote server
+      file:
+        path: "{{ remote_tmp_dir }}"
+        state: "{{ item }}"
+      loop:
+        - absent
+        - directory
+
+    - name: Copy and extract backup from control node directly to remote server
+      unarchive:
+        src: "{{ backup_file_local }}"
+        dest: "{{ remote_tmp_dir }}"
+
+    - block:
+        - name: Stop Docker containers for restore
+          community.docker.docker_compose_v2:
+            project_src: "{{ iot_base_dir }}"
+            state: stopped
+
+        - name: Restore named Docker volumes from archives (with pre-wipe)
+          command: >
+            docker run --rm 
+            -v {{ item }}:/volume_data 
+            -v {{ remote_tmp_dir }}:/backup 
+            busybox sh -c "rm -rf /volume_data/* /volume_data/.* 2>/dev/null || true && tar xzf /backup/{{ item }}.tar.gz -C /volume_data"
+          loop: "{{ docker_volumes }}"
+          changed_when: true
+
+        - name: Restore bind mount configs into place
+          vars:
+            configs_src_dir: "{{ remote_tmp_dir }}/configs/{{ (iot_base_dir | basename) }}"
+          shell: |
+            set -e
+            if [ -d "{{ configs_src_dir }}" ]; then
+              cp -a "{{ configs_src_dir }}/." "{{ iot_base_dir }}"
+            else
+              echo "Configs directory {{ configs_src_dir }} not found in archive, skipping bind mount restore."
+            fi
+          args:
+            executable: /bin/bash
+
+        - name: Fix Mosquitto password file permissions
+          file:
+            path: "{{ iot_base_dir }}/mosquitto/config/passwordfile"
+            owner: "1883"
+            group: "1883"
+            mode: "0700"
+
+      always:
+        - name: Start Docker containers after restore (ALWAYS RUNS)
+          community.docker.docker_compose_v2:
+            project_src: "{{ iot_base_dir }}"
+            state: present
+
+    - name: Clean up temporary files on remote server
+      file:
+        path: "{{ remote_tmp_dir }}"
+        state: absent
+
+    - name: Final summary
+      ansible.builtin.debug:
+        msg:
+          - "Restore completed."
+          - "Restored from: {{ backup_file_local }}"
+          - "Target host: {{ inventory_hostname }}"
