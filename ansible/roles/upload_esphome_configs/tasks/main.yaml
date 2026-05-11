@@ -6,20 +6,12 @@
     state: directory
     mode: '0755'
 
-- name: Find all YAML files in ansible_output directory
-  find:
-    paths: "{{ esphome_output_dir }}"
-    patterns: "*.yaml"
-    recurse: no
-  delegate_to: localhost
-  run_once: true
-  register: esphome_yaml_files
-
-- name: Upload ESPHome YAML files to server
+- name: Upload ESPHome YAML files directly
   copy:
-    src: "{{ esphome_output_dir }}/"
+    src: "{{ item }}"
     dest: "{{ iot_base_dir }}/esphome/config/"
-  when: esphome_yaml_files.matched > 0
+  with_fileglob:
+    - "{{ esphome_output_dir }}/*.yaml"
 
 - name: Verify uploaded files
   find:
