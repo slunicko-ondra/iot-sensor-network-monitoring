@@ -9,7 +9,7 @@ all:
     sensors:
       hosts:
         my-sensor:  # set sensor name
-          ansible_host: <HOST> # set sensor host (IP address or serial port path)
+          ansible_host: <HOST> # set sensor host (IP address, for sensors without IP address like Zigbee set to whatever non-IP value, for example "zigbee")
           config_name: "blank_sensor"  # set sensor config file name (without .yaml extension)
           esp_platform: "esp32"  # set sensor platform (esp32 or esp8266)
           esp_variant: "esp32"  # set sensor variant (for esp32)
