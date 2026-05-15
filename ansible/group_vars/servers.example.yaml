@@ -33,6 +33,12 @@ domain_name: my-domain.internal
 # Base directory for IoT stack Docker containers configuration and data.
 iot_base_dir: /srv/iot_stack/docker
 
+# Prometheus retention
+# You can specify how long Prometheus should keep the collected metrics data.
+# By default, it's set to 15 days and no size limit (0).
+prometheus_retention_time: 15d  # supported units: y, w, d, h, m, s, ms
+prometheus_retention_size: 0    # supported units: B, KB, MB, GB, TB, PB, EB
+
 # Image versions for Docker containers
 # If a variable is not set or is empty, the latest version of the image will be used.
 # prometheus_version: "<tag>"
