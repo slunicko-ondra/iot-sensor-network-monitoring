@@ -47,7 +47,7 @@
             state: stopped
 
         - name: Backup named volumes via Docker CLI (Busybox)
-          ansible.builtin.command: >
+          command: >
             docker run --rm
             -v {{ item }}:/volume_data
             -v {{ remote_tmp_dir }}:/backup
