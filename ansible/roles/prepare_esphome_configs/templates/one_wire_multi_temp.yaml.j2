@@ -5,8 +5,8 @@ substitutions:
   static_ip: {{ ansible_host }}
   gateway_ip: {{ default_gateway }}
   subnet: {{ default_subnet }}
-  mqtt_broker: {{ mqtt_broker }}
-  mqtt_topic_prefix: {{ inventory_hostname }}
+{#  mqtt_broker: {{ mqtt_broker }}#}
+{#  mqtt_topic_prefix: {{ inventory_hostname }}#}
   one_wire_pin: GPIO0
 
 esphome:
@@ -46,17 +46,17 @@ wifi:
 ota:
   - platform: esphome
 
-mqtt:
-  broker: ${mqtt_broker}
-  port: 1883
-  username: !secret mqtt_username
-  password: !secret mqtt_password
-  discovery: true
-  topic_prefix: ${mqtt_topic_prefix}
-  birth_message:
-    topic: ${mqtt_topic_prefix}/status
-    payload: "online"
-    retain: true
+{#mqtt:#}
+{#  broker: ${mqtt_broker}#}
+{#  port: 1883#}
+{#  username: !secret mqtt_username#}
+{#  password: !secret mqtt_password#}
+{#  discovery: true#}
+{#  topic_prefix: ${mqtt_topic_prefix}#}
+{#  birth_message:#}
+{#    topic: ${mqtt_topic_prefix}/status#}
+{#    payload: "online"#}
+{#    retain: true#}
 
 captive_portal:
 
@@ -68,21 +68,21 @@ sensor:
   - platform: dallas_temp
     index: 0
     name: temperature0
-    update_interval: 10s
+    update_interval: 20s
   - platform: dallas_temp
     index: 1
     name: temperature1
-    update_interval: 10s
+    update_interval: 20s
   - platform: dallas_temp
     index: 2
     name: temperature2
-    update_interval: 10s
+    update_interval: 20s
   - platform: dallas_temp
     index: 3
     name: temperature3
-    update_interval: 10s
+    update_interval: 20s
   - platform: dallas_temp
     index: 4
     name: temperature4
-    update_interval: 10s
+    update_interval: 20s
 

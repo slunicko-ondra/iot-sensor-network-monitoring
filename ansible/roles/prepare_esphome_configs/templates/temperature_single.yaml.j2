@@ -5,8 +5,8 @@ substitutions:
   static_ip: {{ ansible_host }}
   gateway_ip: {{ default_gateway }}
   subnet: {{ default_subnet }}
-  mqtt_broker: {{ mqtt_broker }}
-  mqtt_topic_prefix: {{ inventory_hostname }}
+{#  mqtt_broker: {{ mqtt_broker }}#}
+{#  mqtt_topic_prefix: {{ inventory_hostname }}#}
   dht_pin: GPIO0
 
 esphome:
@@ -50,15 +50,15 @@ wifi:
 
 captive_portal:
 
-mqtt:
-  broker: ${mqtt_broker}
-  port: 1883
-  username: !secret mqtt_username
-  password: !secret mqtt_password
-  discovery: true
-  log_topic:
-    topic: "${mqtt_topic_prefix}/debug"
-    level: WARN
+{#mqtt:#}
+{#  broker: ${mqtt_broker}#}
+{#  port: 1883#}
+{#  username: !secret mqtt_username#}
+{#  password: !secret mqtt_password#}
+{#  discovery: true#}
+{#  log_topic:#}
+{#    topic: "${mqtt_topic_prefix}/debug"#}
+{#    level: WARN#}
 
 sensor:
   - platform: dht
@@ -71,11 +71,11 @@ sensor:
       name: "Humidity"
     update_interval: 10s
 
-interval:
-  - interval: 10s
-    then:
-      - mqtt.publish_json:
-          topic: ${mqtt_topic_prefix}/data
-          payload: |-
-            root["temperature"] = id(temp_sensor).state;
-            root["humidity"] = id(humidity_sensor).state;
+{#interval:#}
+{#  - interval: 10s#}
+{#    then:#}
+{#      - mqtt.publish_json:#}
+{#          topic: ${mqtt_topic_prefix}/data#}
+{#          payload: |-#}
+{#            root["temperature"] = id(temp_sensor).state;#}
+{#            root["humidity"] = id(humidity_sensor).state;#}

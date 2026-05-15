@@ -1,7 +1,7 @@
 substitutions:
   device_name: {{ inventory_hostname }}
   sleep_duration: "5min"
-  update_interval: "10s"
+  update_interval: "2s"
   log_level: "DEBUG"
   uart_speed: "115200"
   adc_pin: GPIO3
@@ -31,7 +31,7 @@ esphome:
           condition:
             lambda: 'return id(allow_sleep);'
           then:
-            - delay: 20s
+            - delay: 10s
             - deep_sleep.enter: deep_sleep_1
           else:
             - delay: 5min
@@ -85,6 +85,13 @@ sensor:
     on_value:
       then:
         - zigbee.report: zigbee_solar
+        - if:
+            condition:
+              lambda: 'return id(allow_sleep);'
+            then:
+              - delay: 500ms
+              - logger.log: "Data sent. Entering deep sleep..."
+              - deep_sleep.enter: deep_sleep_1
 
 button:
   - platform: factory_reset

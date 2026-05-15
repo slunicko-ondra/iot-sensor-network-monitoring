@@ -5,8 +5,8 @@ substitutions:
   static_ip: {{ ansible_host }}
   gateway_ip: {{ default_gateway }}
   subnet: {{ default_subnet }}
-  mqtt_broker: {{ mqtt_broker }}
-  mqtt_topic_prefix: {{ inventory_hostname }}
+{#  mqtt_broker: {{ mqtt_broker }}#}
+{#  mqtt_topic_prefix: {{ inventory_hostname }}#}
   ultrasonic_trigger_pin: GPIO32
   ultrasonic_echo_pin: GPIO33
   i2c_sda_pin: GPIO21
@@ -52,43 +52,43 @@ wifi:
 
 captive_portal:
 
-mqtt:
-  broker: ${mqtt_broker}
-  port: 1883
-  username: !secret mqtt_username
-  password: !secret mqtt_password
-  discovery: true
-  topic_prefix: ${mqtt_topic_prefix}
-  birth_message:
-    topic: ${mqtt_topic_prefix}/status
-    payload: "online"
-    retain: true
-  on_message:
-    - topic: ${mqtt_topic_prefix}/calibrateSnow
-      qos: 1
-      then:
-        - lambda: |-
-            char *end = nullptr;
-            const float snow_depth_cm = strtof(x.c_str(), &end);
-            if (end == x.c_str()) {
-              ESP_LOGW("snow_sensor", "Invalid calibration payload: %s", x.c_str());
-              return;
-            }
-
-            if (isnan(id(distance_sensor).state)) {
-              ESP_LOGW("snow_sensor", "Calibration skipped because current distance is invalid");
-              return;
-            }
-
-            const float new_reference_distance_cm = id(distance_sensor).state + snow_depth_cm;
-            id(snow_reference_distance_cm) = new_reference_distance_cm;
-            ESP_LOGI("snow_sensor", "Calibration updated: snow_depth=%.2f cm, reference=%.2f cm", snow_depth_cm, new_reference_distance_cm);
-        - mqtt.publish:
-            topic: ${mqtt_topic_prefix}/calibrationStatus
-            payload: !lambda |-
-              char buffer[96];
-              snprintf(buffer, sizeof(buffer), "Calibration OK: %.2f cm", id(snow_reference_distance_cm));
-              return std::string(buffer);
+{#mqtt:#}
+{#  broker: ${mqtt_broker}#}
+{#  port: 1883#}
+{#  username: !secret mqtt_username#}
+{#  password: !secret mqtt_password#}
+{#  discovery: true#}
+{#  topic_prefix: ${mqtt_topic_prefix}#}
+{#  birth_message:#}
+{#    topic: ${mqtt_topic_prefix}/status#}
+{#    payload: "online"#}
+{#    retain: true#}
+{#  on_message:#}
+{#    - topic: ${mqtt_topic_prefix}/calibrateSnow#}
+{#      qos: 1#}
+{#      then:#}
+{#        - lambda: |-#}
+{#            char *end = nullptr;#}
+{#            const float snow_depth_cm = strtof(x.c_str(), &end);#}
+{#            if (end == x.c_str()) {#}
+{#              ESP_LOGW("snow_sensor", "Invalid calibration payload: %s", x.c_str());#}
+{#              return;#}
+{#            }#}
+{##}
+{#            if (isnan(id(distance_sensor).state)) {#}
+{#              ESP_LOGW("snow_sensor", "Calibration skipped because current distance is invalid");#}
+{#              return;#}
+{#            }#}
+{##}
+{#            const float new_reference_distance_cm = id(distance_sensor).state + snow_depth_cm;#}
+{#            id(snow_reference_distance_cm) = new_reference_distance_cm;#}
+{#            ESP_LOGI("snow_sensor", "Calibration updated: snow_depth=%.2f cm, reference=%.2f cm", snow_depth_cm, new_reference_distance_cm);#}
+{#        - mqtt.publish:#}
+{#            topic: ${mqtt_topic_prefix}/calibrationStatus#}
+{#            payload: !lambda |-#}
+{#              char buffer[96];#}
+{#              snprintf(buffer, sizeof(buffer), "Calibration OK: %.2f cm", id(snow_reference_distance_cm));#}
+{#              return std::string(buffer);#}
 
 i2c:
   sda: ${i2c_sda_pin}
@@ -150,12 +150,12 @@ number:
             id(snow_reference_distance_cm) = new_reference_distance_cm;
             ESP_LOGI("snow_sensor", "Calibration updated: snow_depth=%.2f cm", x);
 
-        - mqtt.publish:
-            topic: ${mqtt_topic_prefix}/calibrationStatus
-            payload: !lambda |-
-              char buffer[96];
-              snprintf(buffer, sizeof(buffer), "Calibrated to: %.2f cm", x);
-              return std::string(buffer);
+{#        - mqtt.publish:#}
+{#            topic: ${mqtt_topic_prefix}/calibrationStatus#}
+{#            payload: !lambda |-#}
+{#              char buffer[96];#}
+{#              snprintf(buffer, sizeof(buffer), "Calibrated to: %.2f cm", x);#}
+{#              return std::string(buffer);#}
 
 button:
   - platform: template
@@ -172,12 +172,12 @@ button:
             id(snow_reference_distance_cm) = id(distance_sensor).state;
             ESP_LOGI("snow_sensor", "Snow height reset to 0.0 cm");
 
-        - mqtt.publish:
-            topic: ${mqtt_topic_prefix}/calibrationStatus
-            payload: !lambda |-
-              char buffer[96];
-              snprintf(buffer, sizeof(buffer), "Reset to ZERO. Ref: %.2f cm", id(snow_reference_distance_cm));
-              return std::string(buffer);
+{#        - mqtt.publish:#}
+{#            topic: ${mqtt_topic_prefix}/calibrationStatus#}
+{#            payload: !lambda |-#}
+{#              char buffer[96];#}
+{#              snprintf(buffer, sizeof(buffer), "Reset to ZERO. Ref: %.2f cm", id(snow_reference_distance_cm));#}
+{#              return std::string(buffer);#}
 
 globals:
   - id: snow_reference_distance_cm
