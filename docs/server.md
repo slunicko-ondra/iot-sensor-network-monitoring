@@ -65,6 +65,26 @@ Before running the playbook, prepare these files in the `ansible/` directory:
 - Internet access for package installation and Docker image pulls
 - A Netbird account with API key
 
+## Testing
+
+This deployment has been tested with the software of the following versions:
+- OS: Debian 13 (trixie) and Armbian v25.11.2 (trixie-based)
+- Docker version 29.2.1, build a5c7197
+- Docker Compose version v5.0.2
+- Containers:
+  - grafana 12.3.1
+  - netbird-client 0.65.0
+  - dnsmasq-local 2.92
+  - dnsmasq-netbird 2.92
+  - zigbee2mqtt 2.8.0
+  - mqtt-exporter 1.11
+  - homeassistant-docker 2026.2.2
+  - mosquitto 2.0.22
+  - nginx-reverse-proxy 1.29.5
+  - esphome 2026.2.2
+  - prometheus 3.9.1
+  - node-exporter 1.10.2
+
 ## Running the deployment
 
 From the `ansible/` directory, the server can be deployed with:
