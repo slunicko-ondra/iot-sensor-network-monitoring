@@ -14,13 +14,6 @@ ESPHome-related files, including:
 - `examples/` — ready-to-copy example configurations and supporting data files
 - `scripts/` — small helper scripts for common ESPHome tasks
 
-### `misc/`
-
-Supporting assets that are not firmware source code:
-
-- `wiring_diagrams/` — diagrams showing how example sensors are wired
-- `3D_models/` — enclosure and casing models for the sensors
-
 ### `platformio/`
 
 A historical PlatformIO example for the snow sensor is kept here for reference. The main workflow in this repository is based on ESPHome.
@@ -29,3 +22,8 @@ A historical PlatformIO example for the snow sensor is kept here for reference. 
 
 For detailed documentation on how to configure, build, and deploy the sensors, please refer to the [`docs/sensors.md`🔗](../docs/sensors.md) file.
 
+## Hardware
+
+3D printable enclosures for the sensors are available in the [hardware/3D_models/](../hardware/3D_models) directory.
+
+Sensor wiring information are available in the [hardware/sensor_wiring/](../hardware/sensor_wiring) directory.

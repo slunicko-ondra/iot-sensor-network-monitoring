@@ -13,6 +13,8 @@ This repository is organized into two main sections:
 
 - [`ansible/`🔗](ansible) – server deployment, sensor preparation, and maintenance automation
 - [`sensors/`🔗](sensors) – ESPHome sensor definitions, examples, helper scripts, and hardware notes
+---
+- [`hardware/`🔗](hardware) – 3D-printable models and wiring diagrams
 
 ## Documentation
 
