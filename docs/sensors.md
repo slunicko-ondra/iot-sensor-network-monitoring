@@ -83,7 +83,7 @@ The `sensors/esphome/examples/` directory contains ready-to-copy example configu
 
 ## Sensor hardware
 
-All hardware-specific notes, such as wiring diagrams, pinouts, and 3D models of enclosures, are stored in the [`sensors/misc/`🔗](../sensors/misc) directory.
+All hardware-specific notes, such as wiring diagrams, pinouts, and 3D models of enclosures, are stored in the [`hardware/`🔗](../hardware) directory.
 
 ## PlatformIO note
 

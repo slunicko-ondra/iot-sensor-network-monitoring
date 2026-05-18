@@ -25,3 +25,5 @@ Documentation is provided in the `docs/` directory and covers the following topi
 - [Sensors documentation](docs/sensors.md)
 
 ![NGINX index page screenshot](docs/images/index.jpg)
+
+![Snow and solar sensor prototypes](docs/images/snow_and_solar.jpg)

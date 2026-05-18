@@ -2,6 +2,9 @@
 
 This directory contains 3D models and enclosure designs used by the project. Each subfolder below contains one model or a related set of files.
 
+![snow and solar sensor prototypes](../../docs/images/snow_and_solar.jpg)
+![multi-temperature sensor prototype](../../docs/images/multi_temperature.jpg)
+
 ## Contents
 
 - [Banana Pi BPI-M2S](banana_pi_m2s) – tray for Lab Rax SBC holder
@@ -22,6 +25,8 @@ This directory contains 3D models and enclosure designs used by the project. Eac
 Lab Rax is a fully 3D printable, modular 10-inch server rack for homelabs. The test setup for this project is built using Lab Rax components, and many of the 3D models in this directory are designed to fit into the Lab Rax system.
 
 Original [Lab Rax collection](https://makerworld.com/cs/collections/5813742-lab-rax) by mklements is available on MakerWorld.
+
+![Lab Rax test setup](../../docs/images/labrax.jpg)
 
 ### Other projects
 
