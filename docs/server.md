@@ -110,11 +110,15 @@ ansible-playbook server_install.yaml
 After the playbook completes, the server should be up and running with the monitoring stack. However, Home Assistant 
 will require some additional configuration through its web interface.
 
-1. Access Home Assistant at `http://homeassistant.<your_domain_or_ip>/`
+1. Access Home Assistant at `http://<server_IP>:8123/`
 2. Complete the initial setup by creating an account and configuring basic settings
-3. Add the MQTT integration and configure it to connect to the local Mosquitto broker
-4. Create long-lived access tokens (Profile > Security > Create Token) for use in the Prometheus configuration
-5. Save the token to Ansible vault and run the `add_ha_bearer.yaml` playbook to update Prometheus with the new token
+3. Add the MQTT integration and configure it to connect to the local Mosquitto broker (`localhost:1883`) with the 
+   credentials defined in `vault.yaml`.
+4. Allow reverse proxy:
+   1. Go to `Settings > System > Network` and find HTTP server section.
+   2. In Reverse Proxy menu, select "Trust X-Forwarded-For" and add "172.16.0.0/12" as trusted proxy network.
+5. Create long-lived access tokens (Profile > Security > Create Token) for use in the Prometheus configuration
+6. Save the token to Ansible vault and run the `add_ha_bearer.yaml` playbook to update Prometheus with the new token
 
 ## Backup and restore
 
